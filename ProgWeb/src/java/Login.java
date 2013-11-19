@@ -61,10 +61,9 @@ public class Login extends HttpServlet {
                 // S is the millisecond
                 SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
                 val_cookie = ("Welcome " + username + " last login: " + simpleDateFormat.format(date));
-            } catch (Exception e) {  val_cookie = ("Welcome " + username + " for the first time!");
+            } catch (Exception e) {
+                val_cookie = ("Welcome " + username + " for the first time!");
             }
-
-  
 
             Date date = new Date();
             Cookie ck = new Cookie(username, "" + date.getTime());//creo il cookie

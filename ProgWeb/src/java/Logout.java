@@ -6,12 +6,7 @@
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -21,8 +16,7 @@ import javax.servlet.http.HttpSession;
  *
  * @author HaoIlMito
  */
-@WebServlet(urlPatterns = {"/Welcome_page"})
-public class Welcome_page extends HttpServlet {
+public class Logout extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -37,21 +31,12 @@ public class Welcome_page extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
-
-            HttpSession session = request.getSession(true);//creo la sessione   //mettere le prossime 5 righe al filtro
-            String username = (String) session.getAttribute("username");        //nel doFilter
-            if (username == null) {
+            HttpSession session = request.getSession(true);
+            if (session != null) {
+                session.invalidate();
                 response.sendRedirect("index.html");
-            }                                                                   //fino a qui
-
-            out.println(Stampa.header());
-            out.println("<div class=" + "container theme-showcase" + ">");
-            out.println("<div class=" + "page-header" + ">");
-            out.println("<h1>Welcome page!</h1></div>");
-            out.println("<div class=\"jumbotron well span6 offset2\"><h3>" + session.getAttribute("cookie") + "</h3><hr>");
-            out.println(Stampa.sezione());
-            out.println(Stampa.div(2));
-            out.println(Stampa.footer());
+                return; // <--- Here.
+            }
         }
     }
 

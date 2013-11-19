@@ -4,6 +4,10 @@
         <servlet-name>NewServlet1</servlet-name>
         <servlet-class>NewServlet1</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>Logout</servlet-name>
+        <servlet-class>Logout</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>NewServlet1</servlet-name>
         <url-pattern>/NewServlet1</url-pattern>
@@ -24,13 +28,17 @@
         <servlet-name>Check_User</servlet-name>
         <url-pattern>/check_user</url-pattern>
     </servlet-mapping>
-        <servlet>
+    <servlet>
         <servlet-name>Welcome_page</servlet-name>
         <servlet-class>Welcome_page</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>Welcome_page</servlet-name>
         <url-pattern>/welcome_page</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>Logout</servlet-name>
+        <url-pattern>/Logout</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>
