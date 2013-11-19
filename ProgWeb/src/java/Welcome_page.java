@@ -6,12 +6,16 @@
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 /**
  *
@@ -33,15 +37,25 @@ public class Welcome_page extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
+            
+            HttpSession session = request.getSession(true);//creo la sessione
+            String username = (String) session.getAttribute("username");
+            if (username == null) {
+                response.sendRedirect("index.html");
+            }
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet Welcome_page</title>");            
+            out.println("<title>Servlet Welcome_page</title>");
+            out.println("<meta charset="+"utf-8"+"><title>Welcome!</title>");    
+            out.println("<link href="+"/bootstrap/css/bootstrap.css"+ "rel="+"stylesheet"+">");
+            out.println("<link href="+"/bootstrap/css/bootstrap.min.css"+ "rel="+"stylesheet"+">");
             out.println("</head>");
             out.println("<body>");
-            Cookie[] cks = request.getCookies();
-            out.println("Welcome" + cks[0].getValue());
+            out.println("<div class="+"jumbotron well"+"><h3>"+session.getAttribute("cookie")+"</h3></div>");
+            
+            out.println("<script src="+"web pages/boostrap/js/bootstrap.js"+"></script>");
+            out.println("<script src="+"web pages/js/bootstrap.min.js"+"></script>");
             out.println("</html>");
         }
     }
