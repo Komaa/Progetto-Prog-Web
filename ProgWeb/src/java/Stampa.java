@@ -10,7 +10,7 @@
  */
 public class Stampa {
 
-    public static String header() {
+    public static String header(String pagina) {
         String header = "<!DOCTYPE html>";
         header += "<html>";
         header += "<head>";
@@ -24,6 +24,9 @@ public class Stampa {
         header += " rel=\"stylesheet\">";
         header += "</head>";
         header += " <body>";
+        header += "<div class=" + "container theme-showcase" + ">";
+        header += "<div class=" + "page-header" + ">";
+        header += "<h1>"+ pagina + "</h1></div>";
         return header;
     }
 
@@ -39,7 +42,7 @@ public class Stampa {
     public static String sezione() {
         String sezione = aref("Inviti", "Inviti");
         sezione += "</br>";
-        sezione += aref("Creazione_gruppi", "Creazione gruppi");
+        sezione += aref("Creazione_gruppo", "Creazione gruppo");
         sezione += "</br>";
         sezione += aref("Gruppi", "Gruppi");
         sezione += "</br>";
