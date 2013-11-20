@@ -1,3 +1,7 @@
+
+import java.util.ArrayList;
+import java.util.Iterator;
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -65,5 +69,37 @@ public class Stampa {
         footer += "</html>";
 
         return footer;
+    }
+    
+    public static String button(String target, String value) {
+        String button="<form action=\""+ target + "\">";
+        button +="<input type=\"submit\" value=\"" + value + "\">";
+        button +="</form>";   
+      
+        return button;
+    }
+    
+    //Primo arrayList passi le stringhe di colonne, Secondo arrayList passi arrayList di righe
+    public static String table(ArrayList<String> colums, ArrayList<ArrayList<String>> rows){
+        ArrayList<String> riga;
+        String table="<table class=\"table table-striped\">";
+        table +="<tr>";
+        Iterator iter=colums.iterator();
+        while(iter.hasNext()){
+            table +="<th>" + iter.next() + "</th>";  
+        }
+        table +="</tr>";
+        Iterator i=rows.iterator();
+        while(i.hasNext()){
+            table +="<tr>"; 
+            riga=(ArrayList<String>)i.next();
+            Iterator iterator=riga.iterator();
+            while(iterator.hasNext()){
+                table +="<td>" + iterator.next() + "</td>";              
+            }
+             table +="</tr>"; 
+        }
+        table +="</table>";
+        return table;
     }
 }

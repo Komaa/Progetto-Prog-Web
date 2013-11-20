@@ -73,17 +73,15 @@ public class Database implements Serializable {
 
     }
     
-    public ArrayList<String> listaUtenti(String username, String password) throws SQLException {
-
-                
+    public ArrayList<String> listaUtenti() throws SQLException {
+        String tmp;
+        ArrayList<String> listautenti= new ArrayList<String>();
         PreparedStatement stm = con.prepareStatement("select * from utenti");
         try {
             ResultSet rs = stm.executeQuery();
             try {
-                if (rs.next()) {
-                    
-                } else {
-                    
+                while(rs.next()) {
+                    listautenti.add(rs.getString("username"));
                 }
             } finally {
                 rs.close();
@@ -92,7 +90,7 @@ public class Database implements Serializable {
             stm.close();
         }
 
-        return ;
+        return listautenti;
 
     }
 }
