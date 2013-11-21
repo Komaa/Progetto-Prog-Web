@@ -55,6 +55,11 @@ public class Stampa {
         return sezione;
     }
 
+        public static String input(String type, String name){
+        String input = "<input type=\"" + type + "\" name=\"" + name + "\">";
+        return input;
+    }
+        
     public static String div(int num) {
         String div = "</div>";
         for (int i = 0; i < num; i++) {
@@ -71,7 +76,7 @@ public class Stampa {
         return footer;
     }
     
-    public static String button(String target, String value) {
+    public static String button(String value, String target) {
         String button="<form action=\""+ target + "\">";
         button +="<input type=\"submit\" value=\"" + value + "\">";
         button +="</form>";   
@@ -82,7 +87,7 @@ public class Stampa {
     //Primo arrayList passi le stringhe di colonne, Secondo arrayList passi arrayList di righe
     public static String table(ArrayList<String> colums, ArrayList<ArrayList<String>> rows){
         ArrayList<String> riga;
-        String table="<table class=\"table table-striped\">";
+        String table="<table class=\"table table-striped\">",app;
         table +="<tr>";
         Iterator iter=colums.iterator();
         while(iter.hasNext()){
@@ -95,7 +100,11 @@ public class Stampa {
             riga=(ArrayList<String>)i.next();
             Iterator iterator=riga.iterator();
             while(iterator.hasNext()){
-                table +="<td>" + iterator.next() + "</td>";              
+              app= (String)iterator.next();
+              if(app.substring(0, 1).equals("&")){
+                  button(app.substring(1), (String)iterator.next());
+              }else                  
+                table +="<td>" + app + "</td>";              
             }
              table +="</tr>"; 
         }
