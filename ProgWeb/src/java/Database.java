@@ -93,4 +93,25 @@ public class Database implements Serializable {
         return listautenti;
 
     }
+    
+    public ArrayList<String> listaInviti() throws SQLException {
+        String tmp;
+        ArrayList<String> listinviti= new ArrayList<String>();
+//        PreparedStatement stm = con.prepareStatement("select * from utenti");
+//        try {
+//            ResultSet rs = stm.executeQuery();
+//            try {
+//                while(rs.next()) {
+//                    listinviti.add(rs.getString("username"));
+//                }
+//            } finally {
+//                rs.close();
+//            }
+//        } finally {
+//            stm.close();
+//        }
+
+        return listinviti;
+
+    }
 }

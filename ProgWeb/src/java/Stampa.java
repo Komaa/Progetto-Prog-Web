@@ -76,10 +76,8 @@ public class Stampa {
         return footer;
     }
     
-    public static String button(String value, String target) {
-        String button="<form action=\""+ target + "\">";
-        button +="<input type=\"submit\" value=\"" + value + "\">";
-        button +="</form>";   
+    public static String button(String value) {
+        String button ="<input type=\"submit\" value=\"" + value + "\">";
       
         return button;
     }
@@ -87,7 +85,7 @@ public class Stampa {
     //Primo arrayList passi le stringhe di colonne, Secondo arrayList passi arrayList di righe
     public static String table(ArrayList<String> colums, ArrayList<ArrayList<String>> rows){
         ArrayList<String> riga;
-        String table="<table class=\"table table-striped\">",app;
+        String table="<table class=\"table table-striped\">",app,value=null;
         table +="<tr>";
         Iterator iter=colums.iterator();
         while(iter.hasNext()){
@@ -102,9 +100,13 @@ public class Stampa {
             while(iterator.hasNext()){
               app= (String)iterator.next();
               if(app.substring(0, 1).equals("&")){
-                  button(app.substring(1), (String)iterator.next());
-              }else                  
-                table +="<td>" + app + "</td>";              
+                  table+="<form action=\""+ (String)iterator.next() + "\">";
+                  button(value);
+                  table+="</form>";
+              }else{                  
+                table +="<td>" + app + "</td>";
+                value=app;
+              }
             }
              table +="</tr>"; 
         }
