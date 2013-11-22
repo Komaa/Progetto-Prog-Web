@@ -16,6 +16,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 /**
  *
@@ -35,18 +36,21 @@ Database dbmanager = new Database();   /**
             throws ServletException, IOException, SQLException {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
-            out.println(Stampa.header("Crea gruppo!"));
-            out.println("<div class=\"jumbotron well span6 offset2\">");
-            out.println(Stampa.div(1));
             
+            HttpSession session = request.getSession(true);//creo la sessione   //mettere le prossime 5 righe al filtro
+            String username = (String) session.getAttribute("username");        //nel doFilter
+            
+            out.println(Stampa.header("Crea gruppo!"));
             out.println("<div class=\"descriptiongroup\">");
-            out.println("<form name=\"input\" action=\"Invita.java\" method=\"get\">");
+            out.println("<form class=\"form-horizontal well span6 offset2\" name=\"input\" action=\"Invita\" method=\"get\">");
+            out.println(Stampa.label("Nome gruppo","titolo_gruppo"));
             out.println(Stampa.input("text", "titolo_gruppo"));
-            out.println(Stampa.input("text", "descrizione_gruppo"));
+            out.println(Stampa.label("Amministratore","amministratore_gruppo"));
+            out.println("<input id=\"amministratore_gruppo\" type=\"text\" name=\"amministratore\" value=\""+username+"\">");
+            out.println("<hr>");
+            out.println(Stampa.button("crea","crea!"));
             out.println("</form>");
             out.println(Stampa.div(1));
-            
-       
             out.println(Stampa.footer());
         }
     }

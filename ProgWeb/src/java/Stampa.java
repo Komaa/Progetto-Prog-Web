@@ -76,10 +76,24 @@ public class Stampa {
         return footer;
     }
     
-    public static String button(String value) {
-        String button ="<input type=\"submit\" value=\"" + value + "\">";
+    public static String button(String value,String azione) {
+        //azione semplicemente è il valore che c'è dentro il bottone: invita, crea, ecc
+        String button ="<button class=\"btn btn-success\" type=\"submit\" value=\"" + value + "\">"+azione+"</button>";
       
         return button;
+    }
+    
+    public static String label(String label,String div) {
+       String llabel = "<label class=\"control-label\" for=\""+div+"\">"+label+"</label>";
+
+       return llabel;
+    }
+    
+    public static String alert (String opzione, String messaggio) {
+        //le opzioni sono: success, info, danger, warning
+        //il messaggio invece è semplicemente il messaggio da scrivere!
+        String allerta = "<div class=\"alert alert-"+opzione+"\"><strong>"+messaggio+"</strong></div>";
+        return allerta;
     }
     
     //Primo arrayList passi le stringhe di colonne, Secondo arrayList passi arrayList di righe
@@ -100,9 +114,9 @@ public class Stampa {
             while(iterator.hasNext()){
               app= (String)iterator.next();
               if(app.substring(0, 1).equals("&")){
-                  table+="<form action=\""+ (String)iterator.next() + "\">";
-                  button(value);
-                  table+="</form>";
+                  table+="<td><form action=\""+ (String)iterator.next() + "\">";
+                  table+=button(value,"invita");
+                  table+="</form></td>";
               }else{                  
                 table +="<td>" + app + "</td>";
                 value=app;

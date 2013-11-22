@@ -114,4 +114,45 @@ public class Database implements Serializable {
         return listinviti;
 
     }
+
+    public boolean check_group(String titolo_gruppo, String amministratore) throws SQLException {
+
+        boolean val = false;
+        
+        PreparedStatement stm = con.prepareStatement("select * from gruppi where nome_gruppo=? and amministratore=?");
+        try {
+            stm.setString(1, titolo_gruppo);
+            stm.setString(2, amministratore);
+
+            ResultSet rs = stm.executeQuery();
+            try {
+                if (rs.next()) {
+                    //quindi il gruppo esiste già e non bisogna crearlo!
+                    val = true;
+                } else {
+                    //non esiste e quindi si può creare!
+                    PreparedStatement stm2 = con.prepareStatement("INSERT INTO gruppi (nome_gruppo,amministratore) VALUES (?,?)");
+                    try {
+                        val = false;
+                        
+                             stm2.setString(1, titolo_gruppo);
+                             stm2.setString(2, amministratore);
+                             System.out.println(stm2);
+                             //executeUpdate è per le query di inserimento!
+                             stm2.executeUpdate();
+                    } finally {
+                        stm2.close();
+                    } 
+                    val = false;
+                }
+            } finally {
+                rs.close();
+            }
+        } finally {
+            stm.close();
+        }
+
+        return val;
+
+    }
 }
