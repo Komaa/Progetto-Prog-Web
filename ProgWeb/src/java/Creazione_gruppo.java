@@ -43,10 +43,12 @@ Database dbmanager = new Database();   /**
             out.println(Stampa.header("Crea gruppo!"));
             out.println("<div class=\"descriptiongroup\">");
             out.println("<form class=\"form-horizontal well span6 offset2\" name=\"input\" action=\"Invita\" method=\"get\">");
+            out.println("<div class=\"control-group\">");
             out.println(Stampa.label("Nome gruppo","titolo_gruppo"));
-            out.println(Stampa.input("text", "titolo_gruppo"));
+            out.println(Stampa.input("text", "titolo_gruppo"));out.println("</br>");
+            out.println("<div class=\"control-group\">");
             out.println(Stampa.label("Amministratore","amministratore_gruppo"));
-            out.println("<input id=\"amministratore_gruppo\" type=\"text\" name=\"amministratore\" value=\""+username+"\">");
+            out.println("<input id=\"amministratore_gruppo\" type=\"text\" name=\"amministratore\" value=\""+username+"\">");out.println(Stampa.div(1));out.println("</br>");
             out.println("<hr>");
             out.println(Stampa.button("crea","crea!"));
             out.println("</form>");

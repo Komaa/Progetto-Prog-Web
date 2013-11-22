@@ -78,7 +78,7 @@ public class Stampa {
     
     public static String button(String value,String azione) {
         //azione semplicemente è il valore che c'è dentro il bottone: invita, crea, ecc
-        String button ="<button class=\"btn btn-success\" type=\"submit\" value=\"" + value + "\">"+azione+"</button>";
+        String button ="<button class=\"btn btn-success\" type=\"submit\" name=\""+azione+"\" value=\"" + value + "\">"+azione+"</button>";
       
         return button;
     }
@@ -97,7 +97,7 @@ public class Stampa {
     }
     
     //Primo arrayList passi le stringhe di colonne, Secondo arrayList passi arrayList di righe
-    public static String table(ArrayList<String> colums, ArrayList<ArrayList<String>> rows){
+    public static String table(String titolo_gruppo,String amministratore,ArrayList<String> colums, ArrayList<ArrayList<String>> rows){
         ArrayList<String> riga;
         String table="<table class=\"table table-striped\">",app,value=null;
         table +="<tr>";
@@ -115,7 +115,9 @@ public class Stampa {
               app= (String)iterator.next();
               if(app.substring(0, 1).equals("&")){
                   table+="<td><form action=\""+ (String)iterator.next() + "\">";
-                  table+=button(value,"invita");
+                  table+=button(value,"invito");
+                  table+="<input type=\"hidden\" name=\"titolo_gruppo\" value=\""+titolo_gruppo+"\">";
+                  table+="<input type=\"hidden\" name=\"amministratore\" value=\""+amministratore+"\">";
                   table+="</form></td>";
               }else{                  
                 table +="<td>" + app + "</td>";

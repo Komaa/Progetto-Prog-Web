@@ -46,17 +46,21 @@ ArrayList<ArrayList<String>> stamptable = new ArrayList<ArrayList<String>>();
         String titolo_gruppo = request.getParameter("titolo_gruppo");
         String amministratore = request.getParameter("amministratore");
         String invito = request.getParameter("invito");
-        
-        
-        if((titolo_gruppo!=null)&&(amministratore!=null))
+        System.out.println("stampo invito: "+invito);
+        out.println("<div class=\"container\">");
+        if((titolo_gruppo!=null)&&(amministratore!=null)){
         //se è già creato non bisogna entrarci di nuovo! (sennò duplica tutti gli utenti con le stampe quando refresha la pagina)
-        if (dbmanager.check_group(titolo_gruppo,amministratore)){
-        {
-            //Ho già creato il gruppo, quindi gli metto un avviso che lo ha già creato
-            out.println(Stampa.alert("danger","Non sei autorizzato oppure il gruppo è già esistente"));
-        }}else if(invito!=null){
-            //Aggiunge invito nel database all'utente invitato
+        if (dbmanager.check_group(titolo_gruppo,amministratore) && (invito!=null)){
             out.println(Stampa.alert("info","Hai invitato l'utente nel gruppo!"));
+            dbmanager.inserisci_utente(invito, titolo_gruppo);
+            //Ho già creato il gruppo, quindi gli metto un avviso che lo ha già creato
+           
+            
+        }} else if ((dbmanager.check_group(titolo_gruppo,amministratore) && (invito == null))){
+             out.println(Stampa.alert("danger","Non sei autorizzato oppure il gruppo è già esistente"));
+            //Aggiunge invito nel database all'utente invitato
+
+            
         }else{
             //Creo il database con i dati
             out.println(Stampa.alert("success","Il gruppo è stato creato!"));
@@ -67,15 +71,15 @@ ArrayList<ArrayList<String>> stamptable = new ArrayList<ArrayList<String>>();
             out.println("Nome gruppo: " + titolo_gruppo +"</br>");
             out.println("Amministratore gruppo: " + amministratore+"</br></br>");
                        out.println("<div class=\"userlist\">");
-            utenti.addAll(dbmanager.listaUtenti());
+            utenti.addAll(dbmanager.listaUtenti(amministratore));
             Iterator i=utenti.iterator();
             while(i.hasNext()){
             String nome=(String) i.next();
             ArrayList<String> app=new ArrayList<String>(Arrays.asList(new String[] {nome, "&Invita","Invita"}));
             stamptable.add(app);
             }
-            out.println(Stampa.table(colums, stamptable));
-            out.println(Stampa.div(3));          
+            out.println(Stampa.table(titolo_gruppo,amministratore,colums, stamptable));
+            out.println(Stampa.div(4));          
 
             out.println(Stampa.footer());
         } catch (SQLException ex) {

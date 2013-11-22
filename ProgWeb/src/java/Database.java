@@ -73,10 +73,12 @@ public class Database implements Serializable {
 
     }
     
-    public ArrayList<String> listaUtenti() throws SQLException {
+    public ArrayList<String> listaUtenti(String username) throws SQLException {
         String tmp;
         ArrayList<String> listautenti= new ArrayList<String>();
-        PreparedStatement stm = con.prepareStatement("select * from utenti");
+        PreparedStatement stm = con.prepareStatement("select * from utenti where username!=?");
+        stm.setString(1, username);
+        
         try {
             ResultSet rs = stm.executeQuery();
             try {
@@ -137,7 +139,7 @@ public class Database implements Serializable {
                         
                              stm2.setString(1, titolo_gruppo);
                              stm2.setString(2, amministratore);
-                             System.out.println(stm2);
+
                              //executeUpdate è per le query di inserimento!
                              stm2.executeUpdate();
                     } finally {
@@ -153,6 +155,28 @@ public class Database implements Serializable {
         }
 
         return val;
-
     }
+    public boolean inserisci_utente(String utente,String titolo_gruppo) throws SQLException {
+
+        boolean val = false;
+                    //bisognerà mettere un campo per vedere se l'utente è in attessa di accettare l'invito o meno nel where
+                    //al momento ho messo uno stato "1" se sono invitati
+                    PreparedStatement stm = con.prepareStatement("INSERT INTO gruppi_utenti (utente,gruppo,stato) VALUES (?,?,?)");
+                    try {
+                        val = false;
+                        
+                             stm.setString(1, utente);
+                             stm.setString(2, titolo_gruppo);
+                             stm.setString(3, "1");
+                             //executeUpdate è per le query di inserimento!
+                             stm.executeUpdate();
+                    } finally {
+                        stm.close();
+                        
+                    } 
+                    val = false;
+        return false;
+       }
+
+  
 }
