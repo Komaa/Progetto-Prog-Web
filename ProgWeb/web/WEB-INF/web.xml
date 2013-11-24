@@ -20,6 +20,10 @@
         <servlet-name>cambia_titolo</servlet-name>
         <servlet-class>cambia_titolo</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>Gruppi</servlet-name>
+        <servlet-class>Gruppi</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>NewServlet1</servlet-name>
         <url-pattern>/NewServlet1</url-pattern>
@@ -63,6 +67,10 @@
     <servlet-mapping>
         <servlet-name>cambia_titolo</servlet-name>
         <url-pattern>/cambia_titolo</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>Gruppi</servlet-name>
+        <url-pattern>/Gruppi</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>

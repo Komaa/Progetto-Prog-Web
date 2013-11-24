@@ -1,4 +1,5 @@
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -12,7 +13,9 @@ import java.util.Iterator;
  * @author HaoIlMito
  */
 public class Stampa {
-
+    
+    static Database dbmanager = new Database();
+    
     public static String header(String pagina) {
         String header = "<!DOCTYPE html>";
         header += "<html>";
@@ -154,6 +157,47 @@ public class Stampa {
 
                 } else {
                     table += "<td>" + app + "</td>";
+                    value = app;
+                }
+            }
+            table += "</tr>";
+        }
+        table += "</table>";
+        return table;
+    }
+
+ public static String table_gruppi(String nome, ArrayList<String> colums, ArrayList<ArrayList<String>> rows) throws SQLException {
+        ArrayList<String> riga;
+        String table = "<table class=\"table table-striped\">", app, value = null;
+        table += "<tr>";
+        Iterator iter = colums.iterator();
+        while (iter.hasNext()) {
+            table += "<th>" + iter.next() + "</th>";
+        }
+        table += "</tr>";
+        Iterator i = rows.iterator();
+        System.out.println("ci sono");
+        while (i.hasNext()) {
+            System.out.println("ci entro");
+            table += "<tr>";
+            riga = (ArrayList<String>) i.next();
+            Iterator iterator = riga.iterator();
+            while (iterator.hasNext()) {
+                System.out.println("ci entro2");
+                app = (String) iterator.next();
+                
+                System.out.println("app:"+app);
+                System.out.println("nome:"+nome);
+                if (app.substring(0, 1).equals("&")) {
+                    table += "<td><form action=\"" + (String) iterator.next() + "\">";
+                    table += button(value, "Accedi");
+                    table += "</form></td>";
+                } else if (dbmanager.controllo_amministratore(value, nome) && app.substring(0,1).equals("%")){
+                    table += "<form action=\"Invita\"><td><input id=\"amministratore_gruppo\" type=\"hidden\" name=\"titolo_gruppo\" value=\""+app+"></td>";
+                    table += Stampa.button(value, "Gestisci")+"</form>";
+                    value = app;
+                } else {
+                    table += "<td>" + Stampa.alert("info","Non sei l'amministratore del gruppo!") + "</td>";
                     value = app;
                 }
             }

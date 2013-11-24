@@ -4,6 +4,7 @@ import java.sql.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.logging.Logger;
 import javax.xml.registry.infomodel.User;
@@ -296,6 +297,28 @@ public class Database implements Serializable {
 
         return val;
     
+    }
+
+  public ArrayList<String> listaGruppi(String utente) throws SQLException {
+        String tmp;
+        ArrayList<String> listinviti = new ArrayList<String>();
+        PreparedStatement stm = con.prepareStatement("select * from gruppi_utenti where utente=? and stato=1");
+        stm.setString(1, utente);
+        try {
+            ResultSet rs = stm.executeQuery();
+            try {
+                while (rs.next()) {
+                    listinviti.add(rs.getString("gruppo"));
+                }
+            } finally {
+                rs.close();
+            }
+        } finally {
+            stm.close();
+        }
+
+        return listinviti;
+
     }
 
 }
