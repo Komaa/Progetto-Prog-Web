@@ -12,6 +12,14 @@
         <servlet-name>Creazione_gruppo</servlet-name>
         <servlet-class>Creazione_gruppo</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>Invito</servlet-name>
+        <servlet-class>Invito</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>cambia_titolo</servlet-name>
+        <servlet-class>cambia_titolo</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>NewServlet1</servlet-name>
         <url-pattern>/NewServlet1</url-pattern>
@@ -47,6 +55,14 @@
     <servlet-mapping>
         <servlet-name>Creazione_gruppo</servlet-name>
         <url-pattern>/Creazione_gruppo</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>Invito</servlet-name>
+        <url-pattern>/Invito</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>cambia_titolo</servlet-name>
+        <url-pattern>/cambia_titolo</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>

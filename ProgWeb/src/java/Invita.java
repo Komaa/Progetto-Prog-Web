@@ -17,6 +17,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 /**
  *
@@ -24,10 +25,12 @@ import javax.servlet.http.HttpServletResponse;
  */
 @WebServlet(urlPatterns = {"/Invita"})
 public class Invita extends HttpServlet {
-Database dbmanager = new Database();
-ArrayList<String> utenti=new ArrayList<String>();
-ArrayList<String> colums = new ArrayList<String>(Arrays.asList(new String[] {"Utenti", "Inviti"}));
-ArrayList<ArrayList<String>> stamptable = new ArrayList<ArrayList<String>>(); 
+
+    Database dbmanager = new Database();
+    ArrayList<String> utenti = new ArrayList<String>();
+    ArrayList<String> colums = new ArrayList<String>(Arrays.asList(new String[]{"Utenti", "Inviti"}));
+    ArrayList<ArrayList<String>> stamptable = new ArrayList<ArrayList<String>>();
+
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -42,49 +45,61 @@ ArrayList<ArrayList<String>> stamptable = new ArrayList<ArrayList<String>>();
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
             
+            HttpSession session = request.getSession(true);//creo la sessione   //mettere le prossime 5 righe al filtro
+            String username = (String) session.getAttribute("username");        //nel doFilter
+            if (username == null) {
+                response.sendRedirect("index.html");
+            }          
+            
+            String titolo_gruppo = request.getParameter("titolo_gruppo");
+            String amministratore = request.getParameter("amministratore");
+            String invito = request.getParameter("invito");
 
-        String titolo_gruppo = request.getParameter("titolo_gruppo");
-        String amministratore = request.getParameter("amministratore");
-        String invito = request.getParameter("invito");
-        System.out.println("stampo invito: "+invito);
-        out.println("<div class=\"container\">");
-        if((titolo_gruppo!=null)&&(amministratore!=null)){
-        //se è già creato non bisogna entrarci di nuovo! (sennò duplica tutti gli utenti con le stampe quando refresha la pagina)
-        if (dbmanager.check_group(titolo_gruppo,amministratore) && (invito!=null)){
-            out.println(Stampa.alert("info","Hai invitato l'utente nel gruppo!"));
-            dbmanager.inserisci_utente(invito, titolo_gruppo);
+            out.println("<div class=\"container\">");
+            if ((titolo_gruppo != null) && (amministratore != null)) {
+                //se è già creato non bisogna entrarci di nuovo! (sennò duplica tutti gli utenti con le stampe quando refresha la pagina)
+                if (dbmanager.check_group(titolo_gruppo, amministratore) && (invito != null)) {
+                    out.println(Stampa.alert("info", "Hai invitato l'utente nel gruppo!"));
+                    dbmanager.inserisci_utente(invito, titolo_gruppo);
+                    response.sendRedirect("Invita");
             //Ho già creato il gruppo, quindi gli metto un avviso che lo ha già creato
-           
-            
-        }} else if ((dbmanager.check_group(titolo_gruppo,amministratore) && (invito == null))){
-             out.println(Stampa.alert("danger","Non sei autorizzato oppure il gruppo è già esistente"));
-            //Aggiunge invito nel database all'utente invitato
 
-            
-        }else{
-            //Creo il database con i dati
-            out.println(Stampa.alert("success","Il gruppo è stato creato!"));
-        }
-            out.println(Stampa.header("Invita utenti nel gruppo!"));
-            out.println("<div class=\"jumbotron well span6 offset2\">");      
-            out.println("<div class=\"groupdescrition\">");
-            out.println("Nome gruppo: " + titolo_gruppo +"</br>");
-            out.println("Amministratore gruppo: " + amministratore+"</br></br>");
-                       out.println("<div class=\"userlist\">");
-            utenti.addAll(dbmanager.listaUtenti(amministratore));
-            Iterator i=utenti.iterator();
-            while(i.hasNext()){
-            String nome=(String) i.next();
-            ArrayList<String> app=new ArrayList<String>(Arrays.asList(new String[] {nome, "&Invita","Invita"}));
-            stamptable.add(app);
+                }
+            } else if ((dbmanager.check_group(titolo_gruppo, amministratore) && (invito == null))) {
+                out.println(Stampa.alert("danger", "Non sei autorizzato oppure il gruppo è già esistente"));
+                //Aggiunge invito nel database all'utente invitato
+            } else {
+                //Creo il database con i dati
+                out.println(Stampa.alert("success", "Il gruppo è stato creato!"));
             }
-            out.println(Stampa.table(titolo_gruppo,amministratore,colums, stamptable));
-            out.println(Stampa.div(4));          
+            out.println(Stampa.header("Invita utenti nel gruppo!"));
+            out.println("<div class=\"jumbotron well span6 offset2\">");
+            out.println("<div class=\"groupdescrition\">");
+            
+            //SE sono l'amministratore del gruppo, posso modificargli il nome e generare il pdf 
+            if (username.equals(amministratore)) {
+                out.println("<form action=\"cambia_titolo\">Nome gruppo: <input id=\"titolo_gruppo\" type=\"text\" name=\"titolo_gruppo_nuovo\" value=\""+titolo_gruppo+"\">"
+                        + "<input type=\"hidden\" name=\"titolo_gruppo_vecchio\" value=\"" + titolo_gruppo + "\">   "+Stampa.button("titolo", "Cambia Titolo")+"</form></br>");
+                out.println("inserire il pulsante genera.pdf</br>");
+            } else {
+            out.println("Nome gruppo: " + titolo_gruppo + "</br>"); }
+            out.println("Amministratore gruppo: " + amministratore + "</br></br>");
+            out.println("<div class=\"userlist\">");
+            
+            utenti.addAll(dbmanager.listaUtenti(amministratore));
+            Iterator i = utenti.iterator();
+            while (i.hasNext()) {
+                String nome = (String) i.next();
+                ArrayList<String> app = new ArrayList<String>(Arrays.asList(new String[]{nome, "&Invita", "Invita"}));
+                stamptable.add(app);
+            }
+            out.println(Stampa.table(titolo_gruppo, amministratore, colums, stamptable));
+            out.println(Stampa.div(4));
 
             out.println(Stampa.footer());
         } catch (SQLException ex) {
-        Logger.getLogger(Invita.class.getName()).log(Level.SEVERE, null, ex);
-    }
+            Logger.getLogger(Invita.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

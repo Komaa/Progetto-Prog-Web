@@ -7,17 +7,9 @@
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.SQLException;
-import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -27,14 +19,8 @@ import javax.servlet.http.HttpSession;
  *
  * @author HaoIlMito
  */
-@WebServlet(urlPatterns = {"/Welcome_page"})
-public class Welcome_page extends HttpServlet {
-
+public class cambia_titolo extends HttpServlet {
     Database dbmanager = new Database();
-    ArrayList<String> inviti = new ArrayList<String>();
-    ArrayList<String> colums = new ArrayList<String>(Arrays.asList(new String[]{"Gruppi", "Accetta / Rifiuta"}));
-    ArrayList<ArrayList<String>> stamptable = new ArrayList<ArrayList<String>>();
-
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -45,33 +31,33 @@ public class Welcome_page extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException, SQLException {
+            throws ServletException, IOException, SQLException, InterruptedException {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
 
-            HttpSession session = request.getSession(true);//creo la sessione   //mettere le prossime 5 righe al filtro
+         HttpSession session = request.getSession(true);//creo la sessione   //mettere le prossime 5 righe al filtro
             String username = (String) session.getAttribute("username");        //nel doFilter
             if (username == null) {
                 response.sendRedirect("index.html");
-            }                                                                   //fino a qui
-
-            out.println(Stampa.header("Welcome page!"));
-            out.println("<div class=\"jumbotron well span6 offset2\"><h3>" + session.getAttribute("cookie") + "</h3><hr>");
-            out.println(Stampa.aref("", "Inviti"));
-            out.println("</br>");
-
-            inviti.addAll(dbmanager.listaInviti(username));
-            Iterator i = inviti.iterator();
-            while (i.hasNext()) {
-                String nome = (String) i.next();
-                ArrayList<String> app = new ArrayList<String>(Arrays.asList(new String[]{nome, "&Invito", "Invito"}));
-                stamptable.add(app);
-            }
-
-            out.println(Stampa.table_inviti(username, colums, stamptable));
-            out.println(Stampa.sezione());
-            out.println(Stampa.div(2));
+            }      
+            
+        String titolo_gruppo_nuovo = request.getParameter("titolo_gruppo_nuovo");
+        String titolo_gruppo_vecchio = request.getParameter("titolo_gruppo_vecchio");
+        
+        //controllo di nuovo se il nome non è vuoto/nullo
+        //controllo se l'utente che sta cambiando il nome è l'amministratore
+        //controllo se il nome non è uguale a prima
+        //controllo se c'è già un gruppo che si chiama come il titolo nuovo che vogliono dargli!
+        
+        if (!(titolo_gruppo_vecchio.equals(titolo_gruppo_nuovo)) && titolo_gruppo_nuovo != null && dbmanager.controllo_amministratore(titolo_gruppo_vecchio,username) && dbmanager.controllo_gruppo(titolo_gruppo_nuovo)) {
+            //scrivo il titolo nuovo nel database
+            dbmanager.uploadTitle(titolo_gruppo_nuovo,titolo_gruppo_vecchio);
+            response.sendRedirect("welcome_page");
+        } else {
+            out.println(Stampa.header("OPSS!!!"));
+            out.println(Stampa.alert("danger", "Nome del gruppo non valido oppure non sei autorizzato a cambiare il titolo!")); 
             out.println(Stampa.footer());
+            }
         }
     }
 
@@ -90,7 +76,9 @@ public class Welcome_page extends HttpServlet {
         try {
             processRequest(request, response);
         } catch (SQLException ex) {
-            Logger.getLogger(Welcome_page.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(cambia_titolo.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (InterruptedException ex) {
+            Logger.getLogger(cambia_titolo.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -108,7 +96,9 @@ public class Welcome_page extends HttpServlet {
         try {
             processRequest(request, response);
         } catch (SQLException ex) {
-            Logger.getLogger(Welcome_page.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(cambia_titolo.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (InterruptedException ex) {
+            Logger.getLogger(cambia_titolo.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
