@@ -43,7 +43,10 @@ public class Forum extends HttpServlet {
             out.println(Stampa.header("Forum del gruppo: "+titolo_gruppo));
             out.println("<div class=\"jumbotron well span6 offset2\">");
             
-            out.println(Stampa.div(2));
+            out.println("<div class=\"comments\">");
+            out.println(Stampa.div(1));
+            
+            out.println(Stampa.div(1));
             out.println(Stampa.footer());
         }
     }

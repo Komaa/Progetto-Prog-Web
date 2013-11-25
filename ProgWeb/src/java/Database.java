@@ -1,5 +1,9 @@
 
+
 import static com.sun.org.apache.xalan.internal.lib.ExsltDatetime.date;
+
+import Models.Comment;
+
 import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -84,6 +88,31 @@ public class Database implements Serializable {
 
     }
 
+     public ArrayList<Comment> listaCommenti(String id_gruppo) throws SQLException {
+        String tmp;
+        Comment commento;
+        ArrayList<Comment> listaCommenti = new ArrayList<Comment>();
+        PreparedStatement stm = con.prepareStatement("select * from comments where id_ruppo=?");
+        stm.setString(1, id_gruppo);
+        System.out.println(stm);
+        try {
+            ResultSet rs = stm.executeQuery();
+            try {
+                while (rs.next()) {
+                    commento= new Comment(rs.getString("commenti"),rs.getString("id_utente"),rs.getString("id_gruppo"),rs.getDate("data"));
+                    listaCommenti.add(commento);
+                }
+            } finally {
+                rs.close();
+            }
+        } finally {
+            stm.close();
+        }
+
+        return listaCommenti;
+
+    }
+     
     public ArrayList<String> listaUtenti(String username, String titolo_gruppo) throws SQLException {
         String tmp;
         ArrayList<String> listautenti = new ArrayList<String>();
