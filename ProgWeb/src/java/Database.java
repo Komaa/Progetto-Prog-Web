@@ -1,10 +1,20 @@
 
+import static com.sun.org.apache.xalan.internal.lib.ExsltDatetime.date;
 import java.io.Serializable;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.text.DateFormat;
+import java.text.Format;
+import java.text.SimpleDateFormat;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 import java.util.logging.Logger;
 import javax.xml.registry.infomodel.User;
@@ -135,14 +145,19 @@ public class Database implements Serializable {
                     //quindi il gruppo esiste già e non bisogna crearlo!
                     val = true;
                 } else {
+                    Date data_creazione = Calendar.getInstance().getTime();        
+                    SimpleDateFormat ft = new SimpleDateFormat ("yyyy/MM/dd");
+                    String creationDate = ft.format(data_creazione);
+                    
+                    System.out.println(creationDate);
                     //non esiste e quindi si può creare!
-                    PreparedStatement stm2 = con.prepareStatement("INSERT INTO gruppi (nome_gruppo,amministratore) VALUES (?,?)");
+                    PreparedStatement stm2 = con.prepareStatement("INSERT INTO gruppi (nome_gruppo,amministratore,data) VALUES (?,?,?)");
                     try {
                         val = false;
 
                         stm2.setString(1, titolo_gruppo);
                         stm2.setString(2, amministratore);
-
+                        stm2.setString(3, creationDate);
                         //executeUpdate è per le query di inserimento!
                         stm2.executeUpdate();
                     } finally {

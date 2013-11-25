@@ -90,8 +90,8 @@ public class Invita extends HttpServlet {
             //SE sono l'amministratore del gruppo, posso modificargli il nome e generare il pdf 
             if (username.equals(amministratore)) {
                 out.println("<form action=\"cambia_titolo\">Nome gruppo: <input id=\"titolo_gruppo\" type=\"text\" name=\"titolo_gruppo_nuovo\" value=\"" + titolo_gruppo + "\">"
-                        + "<input type=\"hidden\" name=\"titolo_gruppo_vecchio\" value=\"" + titolo_gruppo + "\"><input type=\"hidden\" name=\"action\" value=\"3\">   " + Stampa.button("titolo", "Cambia Titolo") + "</form></br>");
-                out.println("inserire il pulsante genera.pdf</br>");
+                        + "<input type=\"hidden\" name=\"titolo_gruppo_vecchio\" value=\"" + titolo_gruppo + "\"><input type=\"hidden\" name=\"action\" value=\"3\">  " + Stampa.button("titolo", "Cambia Titolo") + "</form></br>");
+                out.println("<form action=\"Genera_pdf\"><input id=\"titolo_gruppo\" type=\"hidden\" name=\"titolo_gruppo\" value=\""+titolo_gruppo+"\">"+ Stampa.button("pdf", "Genera PDF!") + "</form></br>");
                 out.println("Amministratore gruppo: " + amministratore + "</br></br>");
                 out.println("<div class=\"userlist\">");
 
