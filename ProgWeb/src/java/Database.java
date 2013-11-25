@@ -3,6 +3,16 @@
 import static com.sun.org.apache.xalan.internal.lib.ExsltDatetime.date;
 
 import Models.Comment;
+import com.itextpdf.text.Chunk;
+import java.io.FileOutputStream;
+import java.io.IOException;
+
+import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.FontFactory;
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.Phrase;
+import com.itextpdf.text.pdf.PdfWriter;
 
 import java.io.Serializable;
 import java.sql.Connection;
@@ -92,7 +102,7 @@ public class Database implements Serializable {
         String tmp;
         Comment commento;
         ArrayList<Comment> listaCommenti = new ArrayList<Comment>();
-        PreparedStatement stm = con.prepareStatement("select * from comments where id_ruppo=?");
+        PreparedStatement stm = con.prepareStatement("select * from comments where id_gruppo=?");
         stm.setString(1, id_gruppo);
         System.out.println(stm);
         try {
@@ -119,7 +129,7 @@ public class Database implements Serializable {
         PreparedStatement stm = con.prepareStatement("select utenti.username from utenti where username!=? && utenti.username NOT IN (select gruppi_utenti.utente FROM gruppi_utenti WHERE gruppo=?)");
         stm.setString(1, username);
         stm.setString(2, titolo_gruppo);
-        System.out.println(stm);
+
         try {
             ResultSet rs = stm.executeQuery();
             try {
@@ -178,7 +188,6 @@ public class Database implements Serializable {
                     SimpleDateFormat ft = new SimpleDateFormat ("yyyy/MM/dd");
                     String creationDate = ft.format(data_creazione);
                     
-                    System.out.println(creationDate);
                     //non esiste e quindi si può creare!
                     PreparedStatement stm2 = con.prepareStatement("INSERT INTO gruppi (nome_gruppo,amministratore,data) VALUES (?,?,?)");
                     try {
@@ -401,5 +410,53 @@ public class Database implements Serializable {
         return listinviti;
 
     }
+
+    public int contaCommenti(String titolo_gruppo) throws SQLException {
+    
+        int commenti = 0;
+        PreparedStatement stm = con.prepareStatement("select COUNT(*) from comments where id_gruppo=?");
+        stm.setString(1, titolo_gruppo);
+        try {
+            ResultSet rs = stm.executeQuery();
+            try {
+                while (rs.next()) {
+                    commenti = rs.getInt(1);
+                }
+            } finally {
+                rs.close();
+            }
+        } finally {
+            stm.close();
+        }
+
+        return commenti;
+    
+    }
+    
+    public Date ultimoPost(String titolo_gruppo) throws SQLException {
+
+        Date commento = null;
+
+        PreparedStatement stm = con.prepareStatement("SELECT data from comments where id_gruppo=? ORDER BY data DESC LIMIT 1");
+        
+        stm.setString(1, titolo_gruppo);
+        
+        try {
+            ResultSet rs = stm.executeQuery();
+            try {
+                while (rs.next()) {
+                    commento= rs.getDate("data");
+                }
+            } finally {
+                rs.close();
+            }
+        } finally {
+            stm.close();
+        }
+
+        return commento;
+    }
+
+ 
 
 }

@@ -18,6 +18,11 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import Models.Comment;
+import com.itextpdf.text.Document;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 
 /**
  *
@@ -59,8 +64,6 @@ public class Invita extends HttpServlet {
 
             out.println(Stampa.header("Invita utenti nel gruppo!"));
             out.println("<div class=\"container\">");
-            System.out.println(titolo_gruppo);
-            System.out.println(amministratore);
             if ((titolo_gruppo != null) && (amministratore != null)) {
                 //se è già creato non bisogna entrarci di nuovo! (sennò duplica tutti gli utenti con le stampe quando refresha la pagina)
                 if (action.equals("2")) {
@@ -83,7 +86,9 @@ public class Invita extends HttpServlet {
                 out.println(Stampa.alert("danger", "Ops, errore accesso"));
        
             } 
-            System.out.println(titolo_gruppo);
+
+
+            
             out.println("<div class=\"jumbotron well span6 offset2\">");
             out.println("<div class=\"groupdescrition\">");
 
@@ -91,7 +96,7 @@ public class Invita extends HttpServlet {
             if (username.equals(amministratore)) {
                 out.println("<form action=\"cambia_titolo\">Nome gruppo: <input id=\"titolo_gruppo\" type=\"text\" name=\"titolo_gruppo_nuovo\" value=\"" + titolo_gruppo + "\">"
                         + "<input type=\"hidden\" name=\"titolo_gruppo_vecchio\" value=\"" + titolo_gruppo + "\"><input type=\"hidden\" name=\"action\" value=\"3\">  " + Stampa.button("titolo", "Cambia Titolo") + "</form></br>");
-                out.println("<form action=\"Genera_pdf\"><input id=\"titolo_gruppo\" type=\"hidden\" name=\"titolo_gruppo\" value=\""+titolo_gruppo+"\">"+ Stampa.button("pdf", "Genera PDF!") + "</form></br>");
+                out.println("<form action=\"GeneraPdf\">" + Stampa.button(titolo_gruppo,"Genera")+"</form>");out.println("</br>");
                 out.println("Amministratore gruppo: " + amministratore + "</br></br>");
                 out.println("<div class=\"userlist\">");
 

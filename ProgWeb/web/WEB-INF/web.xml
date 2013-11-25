@@ -32,6 +32,10 @@
         <servlet-name>Genera_pdf</servlet-name>
         <servlet-class>Genera_pdf</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>GeneraPdf</servlet-name>
+        <servlet-class>GeneraPdf</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>NewServlet1</servlet-name>
         <url-pattern>/NewServlet1</url-pattern>
@@ -87,6 +91,10 @@
     <servlet-mapping>
         <servlet-name>Genera_pdf</servlet-name>
         <url-pattern>/Genera_pdf</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>GeneraPdf</servlet-name>
+        <url-pattern>/GeneraPdf</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>

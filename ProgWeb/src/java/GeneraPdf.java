@@ -5,28 +5,38 @@
  */
 
 import com.itextpdf.text.Chunk;
-import java.io.FileOutputStream;
 import java.io.IOException;
-
+import java.util.Date;
+ 
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+ 
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.FontFactory;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.Phrase;
 import com.itextpdf.text.pdf.PdfWriter;
-import java.io.IOException;
+import java.io.FileOutputStream;
 import java.io.PrintWriter;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
  * @author HaoIlMito
  */
-public class Genera_pdf extends HttpServlet {
+public class GeneraPdf extends HttpServlet {
+
+    Database dbmanager = new Database();
+    ArrayList<String> utenti = new ArrayList<String>();
+    ArrayList<String> colums = new ArrayList<String>(Arrays.asList(new String[]{"Utenti", "Inviti"}));
+    ArrayList<ArrayList<String>> stamptable = new ArrayList<ArrayList<String>>();
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -38,18 +48,43 @@ public class Genera_pdf extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+            throws ServletException, IOException, SQLException, DocumentException {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
+//            //creo la lista degli utenti
+//            HttpSession session = request.getSession(true);//creo la sessione   //mettere le prossime 5 righe al filtro
+//            String username = (String) session.getAttribute("username");        //nel doFilter
+//            if (username == null) {
+//                response.sendRedirect("index.html");
+//            }
+//
+//            String titolo_gruppo = request.getParameter("Genera");
+//            System.out.println(titolo_gruppo);
+//            ArrayList<String> utenti = dbmanager.listaUtenti(username, titolo_gruppo);
+//            utenti.add(username);
+//            System.out.println("Utenti: " + utenti.size());
+//
+//            //creo la lista dei post fatti
+//            int commenti = dbmanager.contaCommenti(titolo_gruppo);
+//            System.out.println("commenti: " + commenti);
+//            //creo la data dell'ultimo post
+//
+//            Date ultimo_post = dbmanager.ultimoPost(titolo_gruppo);
+//            SimpleDateFormat ft = new SimpleDateFormat("yyyy/MM/dd");
+//
+//            if (ultimo_post != null) {
+//                String ultimo_post_string = ft.format(ultimo_post);
+//                System.out.println(ultimo_post);
+//            }
+//            //temporanea
+//            String ultimo_post_string = null;
+//
+//            String nome_pdf = titolo_gruppo + ".pdf";
+//            System.out.println(nome_pdf);
             
-            HttpSession session = request.getSession(true);//creo la sessione   //mettere le prossime 5 righe al filtro
-            String username = (String) session.getAttribute("username");        //nel doFilter
-            if (username == null) {
-                response.sendRedirect("index.html");
-            }   
-            
-            String titolo_gruppo = request.getParameter("titolo_gruppo");
-            
+        response.setContentType("application/pdf");
+
+
 		// step 1: creation of a document-object
 		Document document = new Document();
 		try {
@@ -82,11 +117,11 @@ public class Genera_pdf extends HttpServlet {
 		}
 
 		// step 5: we close the document
-		document.close();            
-            
-            
-        }
+		document.close();
+
+
     }
+}
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
@@ -100,7 +135,13 @@ public class Genera_pdf extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        try {
+            processRequest(request, response);
+        } catch (SQLException ex) {
+            Logger.getLogger(GeneraPdf.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (DocumentException ex) {
+            Logger.getLogger(GeneraPdf.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     /**
@@ -114,7 +155,13 @@ public class Genera_pdf extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        try {
+            processRequest(request, response);
+        } catch (SQLException ex) {
+            Logger.getLogger(GeneraPdf.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (DocumentException ex) {
+            Logger.getLogger(GeneraPdf.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     /**
