@@ -74,12 +74,13 @@ public class Database implements Serializable {
 
     }
 
-    public ArrayList<String> listaUtenti(String username) throws SQLException {
+    public ArrayList<String> listaUtenti(String username, String titolo_gruppo) throws SQLException {
         String tmp;
         ArrayList<String> listautenti = new ArrayList<String>();
-        PreparedStatement stm = con.prepareStatement("select * from utenti,gruppi_utenti where username!=?");
+        PreparedStatement stm = con.prepareStatement("select utenti.username from utenti where username!=? && utenti.username NOT IN (select gruppi_utenti.utente FROM gruppi_utenti WHERE gruppo=?)");
         stm.setString(1, username);
-
+        stm.setString(2, titolo_gruppo);
+        System.out.println(stm);
         try {
             ResultSet rs = stm.executeQuery();
             try {
@@ -158,6 +159,32 @@ public class Database implements Serializable {
 
         return val;
     }
+    
+        public boolean inserisci_amministratore(String utente, String titolo_gruppo) throws SQLException {
+
+        boolean val = false;
+
+        // STATO 1: INVITATO
+        // STATO 2: ACCETTO
+        // STATO 3: RIFIUTATO
+        //bisognerà mettere un campo per vedere se l'utente è in attessa di accettare l'invito o meno nel where
+        //al momento ho messo uno stato "1" se sono invitati
+        PreparedStatement stm = con.prepareStatement("INSERT INTO gruppi_utenti (utente,gruppo,stato) VALUES (?,?,?)");
+        try {
+            val = false;
+
+            stm.setString(1, utente);
+            stm.setString(2, titolo_gruppo);
+            stm.setString(3, "2");
+            //executeUpdate è per le query di inserimento!
+            stm.executeUpdate();
+        } finally {
+            stm.close();
+
+        }
+        val = false;
+        return false;
+    }
 
     public boolean inserisci_utente(String utente, String titolo_gruppo) throws SQLException {
 
@@ -190,7 +217,6 @@ public class Database implements Serializable {
         // STATO 1: INVITATO
         // STATO 2: ACCETTO
         // STATO 3: RIFIUTATO
-
         PreparedStatement stm = con.prepareStatement("UPDATE gruppi_utenti SET stato=? where gruppo=? and utente=? and stato=?");
         try {
 
@@ -209,11 +235,10 @@ public class Database implements Serializable {
     }
 
     void rifiuto_invito(String titolo_gruppo, String username) throws SQLException {
-       
+
         // STATO 1: INVITATO
         // STATO 2: ACCETTO
         // STATO 3: RIFIUTATO
-       
         PreparedStatement stm = con.prepareStatement("UPDATE gruppi_utenti SET stato=? where gruppo=? and utente=? and stato=?");
         try {
 
@@ -230,25 +255,36 @@ public class Database implements Serializable {
         }
     }
 
-    public void uploadTitle(String titolo_gruppo_nuovo,String titolo_gruppo_vecchio) throws SQLException {
+    public void uploadTitle(String titolo_gruppo_nuovo, String titolo_gruppo_vecchio) throws SQLException {
         // STATO 1: INVITATO
         // STATO 2: ACCETTO
         // STATO 3: RIFIUTATO
-       
+
         PreparedStatement stm = con.prepareStatement("UPDATE gruppi SET nome_gruppo=? where nome_gruppo=?");
         try {
 
             stm.setString(1, titolo_gruppo_nuovo);
-            stm.setString(2, titolo_gruppo_vecchio);    
+            stm.setString(2, titolo_gruppo_vecchio);
 
             //executeUpdate è per le query di inserimento!
             stm.executeUpdate();
         } finally {
             stm.close();
         }
+        PreparedStatement stm2 = con.prepareStatement("UPDATE gruppi_utenti SET gruppo=? where gruppo=?");
+        try {
+
+            stm2.setString(1, titolo_gruppo_nuovo);
+            stm2.setString(2, titolo_gruppo_vecchio);
+
+            //executeUpdate è per le query di inserimento!
+            stm2.executeUpdate();
+        } finally {
+            stm2.close();
+        }
     }
 
-    public boolean controllo_amministratore(String titolo_gruppo_vecchio,String username) throws SQLException {
+    public boolean controllo_amministratore(String titolo_gruppo_vecchio, String username) throws SQLException {
         boolean val = false;
 
         PreparedStatement stm = con.prepareStatement("select * from gruppi where amministratore=? and nome_gruppo=?");
@@ -271,11 +307,11 @@ public class Database implements Serializable {
         }
 
         return val;
-        
+
     }
 
     public boolean controllo_gruppo(String titolo_gruppo_nuovo) throws SQLException {
-    
+
         boolean val = false;
 
         PreparedStatement stm = con.prepareStatement("select * from gruppi where nome_gruppo=?");
@@ -296,14 +332,15 @@ public class Database implements Serializable {
         }
 
         return val;
-    
+
     }
 
-  public ArrayList<String> listaGruppi(String utente) throws SQLException {
+    public ArrayList<String> listaGruppi(String utente) throws SQLException {
         String tmp;
         ArrayList<String> listinviti = new ArrayList<String>();
-        PreparedStatement stm = con.prepareStatement("select * from gruppi_utenti where utente=? and stato=1");
+        PreparedStatement stm = con.prepareStatement("select * from gruppi_utenti where utente=? and stato=?");
         stm.setString(1, utente);
+        stm.setString(2, "2");
         try {
             ResultSet rs = stm.executeQuery();
             try {

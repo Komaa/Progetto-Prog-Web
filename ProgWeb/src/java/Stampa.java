@@ -13,9 +13,9 @@ import java.util.Iterator;
  * @author HaoIlMito
  */
 public class Stampa {
-    
+
     static Database dbmanager = new Database();
-    
+
     public static String header(String pagina) {
         String header = "<!DOCTYPE html>";
         header += "<html>";
@@ -33,7 +33,7 @@ public class Stampa {
         header += "<div class=" + "container theme-showcase" + ">";
         header += "<div class=" + "page-header" + ">";
         header += "<h1>" + pagina + "</h1></div>";
-        header += aref("welcome_page",button("welcome_page", "Torna in home!")) + "</br></br>";
+        header += aref("welcome_page", button("welcome_page", "Torna in home!")) + "</br></br>";
         return header;
     }
 
@@ -120,6 +120,7 @@ public class Stampa {
                     table += button(value, "invito");
                     table += "<input type=\"hidden\" name=\"titolo_gruppo\" value=\"" + titolo_gruppo + "\">";
                     table += "<input type=\"hidden\" name=\"amministratore\" value=\"" + amministratore + "\">";
+                    table += "<input id=\"action\" type=\"hidden\" name=\"action\" value=\"2\">";
                     table += "</form></td>";
                 } else {
                     table += "<td>" + app + "</td>";
@@ -152,7 +153,7 @@ public class Stampa {
                     table += "<td><form action=\"" + (String) iterator.next() + "\">";
                     table += button("Accetta", "Accetta");
                     table += "  <button class=\"btn btn-danger\" type=\"submit\" name=\"Rifiuta\" value=\"Rifiuta\">Rifiuta</button>";
-                    table += "<input type=\"hidden\" name=\"titolo_gruppo\" value=\""+value+"\">";
+                    table += "<input type=\"hidden\" name=\"titolo_gruppo\" value=\"" + value + "\">";
                     table += "</form></td>";
 
                 } else {
@@ -166,7 +167,7 @@ public class Stampa {
         return table;
     }
 
- public static String table_gruppi(String nome, ArrayList<String> colums, ArrayList<ArrayList<String>> rows) throws SQLException {
+    public static String table_gruppi(String nome, ArrayList<String> colums, ArrayList<ArrayList<String>> rows) throws SQLException {
         ArrayList<String> riga;
         String table = "<table class=\"table table-striped\">", app, value = null;
         table += "<tr>";
@@ -185,19 +186,19 @@ public class Stampa {
             while (iterator.hasNext()) {
                 System.out.println("ci entro2");
                 app = (String) iterator.next();
-                
-                System.out.println("app:"+app);
-                System.out.println("nome:"+nome);
+
+                System.out.println("app:" + app);
+                System.out.println("nome:" + nome);
                 if (app.substring(0, 1).equals("&")) {
                     table += "<td><form action=\"" + (String) iterator.next() + "\">";
                     table += button(value, "Accedi");
                     table += "</form></td>";
-                } else if (dbmanager.controllo_amministratore(value, nome) && app.substring(0,1).equals("%")){
-                    table += "<form action=\"Invita\"><td><input id=\"amministratore_gruppo\" type=\"hidden\" name=\"titolo_gruppo\" value=\""+app+"></td>";
-                    table += Stampa.button(value, "Gestisci")+"</form>";
+                } else if (dbmanager.controllo_amministratore(value, nome) && app.substring(0, 1).equals("%")) {
+                    table += "<form action=\"Invita\"><td><input id=\"amministratore_gruppo\" type=\"hidden\" name=\"titolo_gruppo\" value=\"" + app + "></td>";
+                    table += Stampa.button(value, "Gestisci") + "</form>";
                     value = app;
                 } else {
-                    table += "<td>" + Stampa.alert("info","Non sei l'amministratore del gruppo!") + "</td>";
+                    table += "<td>" + Stampa.alert("info", "Non sei l'amministratore del gruppo!") + "</td>";
                     value = app;
                 }
             }

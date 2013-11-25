@@ -41,59 +41,76 @@ public class Invita extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+            throws ServletException, IOException, SQLException {
         response.setContentType("text/html;charset=UTF-8");
+
         try (PrintWriter out = response.getWriter()) {
-            
+
             HttpSession session = request.getSession(true);//creo la sessione   //mettere le prossime 5 righe al filtro
             String username = (String) session.getAttribute("username");        //nel doFilter
             if (username == null) {
                 response.sendRedirect("index.html");
-            }          
-            
+            }
+
             String titolo_gruppo = request.getParameter("titolo_gruppo");
             String amministratore = request.getParameter("amministratore");
+            String action = request.getParameter("action");
             String invito = request.getParameter("invito");
 
+            out.println(Stampa.header("Invita utenti nel gruppo!"));
             out.println("<div class=\"container\">");
+            System.out.println(amministratore);
             if ((titolo_gruppo != null) && (amministratore != null)) {
                 //se è già creato non bisogna entrarci di nuovo! (sennò duplica tutti gli utenti con le stampe quando refresha la pagina)
-                if (dbmanager.check_group(titolo_gruppo, amministratore) && (invito != null)) {
+                if (action.equals("2")) {
                     out.println(Stampa.alert("info", "Hai invitato l'utente nel gruppo!"));
                     dbmanager.inserisci_utente(invito, titolo_gruppo);
-                    response.sendRedirect("Invita");
-            //Ho già creato il gruppo, quindi gli metto un avviso che lo ha già creato
+                    //Ho già creato il gruppo, quindi gli metto un avviso che lo ha già creato
 
-                }
-            } else if ((dbmanager.check_group(titolo_gruppo, amministratore) && (invito == null))) {
+                }else if (dbmanager.check_group(titolo_gruppo, amministratore)) {
                 out.println(Stampa.alert("danger", "Non sei autorizzato oppure il gruppo è già esistente"));
-                //Aggiunge invito nel database all'utente invitato
-            } else {
+            } else  if (action.equals("1")){
                 //Creo il database con i dati
+                dbmanager.inserisci_amministratore(username,titolo_gruppo);
                 out.println(Stampa.alert("success", "Il gruppo è stato creato!"));
-            }
-            out.println(Stampa.header("Invita utenti nel gruppo!"));
+            } else if (action.equals("3")) {
+                out.println(Stampa.alert("success","Hai modificato il nome del gruppo"));
+            } 
+            }else{
+                out.println(Stampa.alert("danger", "Ops, errore accesso"));
+       
+            } 
+
             out.println("<div class=\"jumbotron well span6 offset2\">");
             out.println("<div class=\"groupdescrition\">");
-            
+
             //SE sono l'amministratore del gruppo, posso modificargli il nome e generare il pdf 
             if (username.equals(amministratore)) {
-                out.println("<form action=\"cambia_titolo\">Nome gruppo: <input id=\"titolo_gruppo\" type=\"text\" name=\"titolo_gruppo_nuovo\" value=\""+titolo_gruppo+"\">"
-                        + "<input type=\"hidden\" name=\"titolo_gruppo_vecchio\" value=\"" + titolo_gruppo + "\">   "+Stampa.button("titolo", "Cambia Titolo")+"</form></br>");
+                out.println("<form action=\"cambia_titolo\">Nome gruppo: <input id=\"titolo_gruppo\" type=\"text\" name=\"titolo_gruppo_nuovo\" value=\"" + titolo_gruppo + "\">"
+                        + "<input type=\"hidden\" name=\"titolo_gruppo_vecchio\" value=\"" + titolo_gruppo + "\"><input type=\"hidden\" name=\"action\" value=\"3\">   " + Stampa.button("titolo", "Cambia Titolo") + "</form></br>");
                 out.println("inserire il pulsante genera.pdf</br>");
-            } else {
-            out.println("Nome gruppo: " + titolo_gruppo + "</br>"); }
-            out.println("Amministratore gruppo: " + amministratore + "</br></br>");
-            out.println("<div class=\"userlist\">");
-            
-            utenti.addAll(dbmanager.listaUtenti(amministratore));
-            Iterator i = utenti.iterator();
-            while (i.hasNext()) {
-                String nome = (String) i.next();
-                ArrayList<String> app = new ArrayList<String>(Arrays.asList(new String[]{nome, "&Invita", "Invita"}));
-                stamptable.add(app);
+                out.println("Amministratore gruppo: " + amministratore + "</br></br>");
+                out.println("<div class=\"userlist\">");
+
+                utenti.clear();
+                stamptable.clear();
+
+                utenti.addAll(dbmanager.listaUtenti(amministratore, titolo_gruppo));
+                System.out.println(utenti.size());
+                Iterator i = utenti.iterator();
+                while (i.hasNext()) {
+                    String nome = (String) i.next();
+                    ArrayList<String> app = new ArrayList<String>(Arrays.asList(new String[]{nome, "&Invita", "Invita"}));
+                    stamptable.add(app);
+                }
+                if (stamptable.size() > 0) {
+                    out.println(Stampa.table(titolo_gruppo, amministratore, colums, stamptable));
+                } else {
+                    out.println(Stampa.alert("warning", "Non ci sono utenti da invitare"));
+                }
+
             }
-            out.println(Stampa.table(titolo_gruppo, amministratore, colums, stamptable));
+
             out.println(Stampa.div(4));
 
             out.println(Stampa.footer());
@@ -114,7 +131,11 @@ public class Invita extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        try {
+            processRequest(request, response);
+        } catch (SQLException ex) {
+            Logger.getLogger(Invita.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     /**
@@ -128,7 +149,11 @@ public class Invita extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        try {
+            processRequest(request, response);
+        } catch (SQLException ex) {
+            Logger.getLogger(Invita.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     /**

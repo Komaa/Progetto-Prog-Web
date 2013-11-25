@@ -20,7 +20,9 @@ import javax.servlet.http.HttpSession;
  * @author HaoIlMito
  */
 public class Invito extends HttpServlet {
+
     Database dbmanager = new Database();
+
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -35,25 +37,30 @@ public class Invito extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
 
-         HttpSession session = request.getSession(true);//creo la sessione   //mettere le prossime 5 righe al filtro
+            HttpSession session = request.getSession(true);//creo la sessione   //mettere le prossime 5 righe al filtro
             String username = (String) session.getAttribute("username");        //nel doFilter
             if (username == null) {
                 response.sendRedirect("index.html");
-            }      
-        
-        String accetto = request.getParameter("Accetta");
-        String titolo_gruppo = request.getParameter("titolo_gruppo");
-        
-        if (accetto != null) {
-            //significa che ho premuto su accetta e quindi devo cambiare lo stato nel database da 1 a 2;
-            dbmanager.accetto_invito(titolo_gruppo,username);
-            response.sendRedirect("welcome_page");
-        } else {
-            
-            dbmanager.rifiuto_invito(titolo_gruppo,username);
-            response.sendRedirect("welcome_page");
-        }
-            
+            }
+
+            String accetto = request.getParameter("Accetta");
+            String rifiuta = request.getParameter("Rifiuta");
+            String titolo_gruppo = request.getParameter("titolo_gruppo");
+            if (accetto == null) {
+                accetto = "a";
+            }
+            if (rifiuta == null) {
+                rifiuta = "a";
+            }
+            if (accetto.equals("Accetta")) {
+                //significa che ho premuto su accetta e quindi devo cambiare lo stato nel database da 1 a 2;
+                dbmanager.accetto_invito(titolo_gruppo, username);
+                response.sendRedirect("welcome_page");
+            } else if (rifiuta.equals("Rifiuta")) {
+                dbmanager.rifiuto_invito(titolo_gruppo, username);
+                response.sendRedirect("welcome_page");
+            }
+
         }
     }
 

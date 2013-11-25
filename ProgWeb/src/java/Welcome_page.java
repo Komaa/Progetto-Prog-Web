@@ -60,6 +60,9 @@ public class Welcome_page extends HttpServlet {
             out.println(Stampa.aref("", "Inviti"));
             out.println("</br>");
 
+            inviti.clear();
+            stamptable.clear();
+
             inviti.addAll(dbmanager.listaInviti(username));
             Iterator i = inviti.iterator();
             while (i.hasNext()) {
@@ -67,8 +70,11 @@ public class Welcome_page extends HttpServlet {
                 ArrayList<String> app = new ArrayList<String>(Arrays.asList(new String[]{nome, "&Invito", "Invito"}));
                 stamptable.add(app);
             }
-
-            out.println(Stampa.table_inviti(username, colums, stamptable));
+            if (stamptable.size() > 0) {
+                out.println(Stampa.table_inviti(username, colums, stamptable));
+            } else {
+                out.println(Stampa.alert("warning", "Non ci sono inviti"));
+            }
             out.println(Stampa.sezione());
             out.println(Stampa.div(2));
             out.println(Stampa.footer());

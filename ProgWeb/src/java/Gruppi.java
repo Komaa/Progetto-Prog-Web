@@ -25,7 +25,7 @@ import javax.servlet.http.HttpSession;
 public class Gruppi extends HttpServlet {
     
     Database dbmanager = new Database();
-    ArrayList<String> inviti = new ArrayList<String>();
+    ArrayList<String> gruppi = new ArrayList<String>();
     ArrayList<String> colums = new ArrayList<String>(Arrays.asList(new String[]{"Gruppi", "Entra nel forum", "Gestione gruppo"}));
     ArrayList<ArrayList<String>> stamptable = new ArrayList<ArrayList<String>>();
     
@@ -51,14 +51,15 @@ public class Gruppi extends HttpServlet {
             
             out.println(Stampa.header("Lista dei gruppi"));
             
-            inviti.addAll(dbmanager.listaGruppi(username));
-            Iterator i = inviti.iterator();
+            gruppi.addAll(dbmanager.listaGruppi(username));
+            Iterator i = gruppi.iterator();
+            System.out.println(gruppi.size());
             while (i.hasNext()) {
                 String nome = (String) i.next();
                 ArrayList<String> app = new ArrayList<String>(Arrays.asList(new String[]{nome, "&Invito", "%Gestione gruppo"}));
                 stamptable.add(app);
             }
-            
+            System.out.println(stamptable.size());
             out.println(Stampa.table_gruppi(username, colums, stamptable));
             
             out.println(Stampa.div(2));

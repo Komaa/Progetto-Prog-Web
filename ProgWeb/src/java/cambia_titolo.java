@@ -20,7 +20,9 @@ import javax.servlet.http.HttpSession;
  * @author HaoIlMito
  */
 public class cambia_titolo extends HttpServlet {
+
     Database dbmanager = new Database();
+
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -35,28 +37,27 @@ public class cambia_titolo extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
 
-         HttpSession session = request.getSession(true);//creo la sessione   //mettere le prossime 5 righe al filtro
+            HttpSession session = request.getSession(true);//creo la sessione   //mettere le prossime 5 righe al filtro
             String username = (String) session.getAttribute("username");        //nel doFilter
             if (username == null) {
                 response.sendRedirect("index.html");
-            }      
-            
-        String titolo_gruppo_nuovo = request.getParameter("titolo_gruppo_nuovo");
-        String titolo_gruppo_vecchio = request.getParameter("titolo_gruppo_vecchio");
-        
-        //controllo di nuovo se il nome non è vuoto/nullo
-        //controllo se l'utente che sta cambiando il nome è l'amministratore
-        //controllo se il nome non è uguale a prima
-        //controllo se c'è già un gruppo che si chiama come il titolo nuovo che vogliono dargli!
-        
-        if (!(titolo_gruppo_vecchio.equals(titolo_gruppo_nuovo)) && titolo_gruppo_nuovo != null && dbmanager.controllo_amministratore(titolo_gruppo_vecchio,username) && dbmanager.controllo_gruppo(titolo_gruppo_nuovo)) {
-            //scrivo il titolo nuovo nel database
-            dbmanager.uploadTitle(titolo_gruppo_nuovo,titolo_gruppo_vecchio);
-            response.sendRedirect("welcome_page");
-        } else {
-            out.println(Stampa.header("OPSS!!!"));
-            out.println(Stampa.alert("danger", "Nome del gruppo non valido oppure non sei autorizzato a cambiare il titolo!")); 
-            out.println(Stampa.footer());
+            }
+
+            String titolo_gruppo_nuovo = request.getParameter("titolo_gruppo_nuovo");
+            String titolo_gruppo_vecchio = request.getParameter("titolo_gruppo_vecchio");
+
+            //controllo di nuovo se il nome non è vuoto/nullo
+            //controllo se l'utente che sta cambiando il nome è l'amministratore
+            //controllo se il nome non è uguale a prima
+            //controllo se c'è già un gruppo che si chiama come il titolo nuovo che vogliono dargli!
+            if (!(titolo_gruppo_vecchio.equals(titolo_gruppo_nuovo)) && titolo_gruppo_nuovo != null && dbmanager.controllo_amministratore(titolo_gruppo_vecchio, username) && dbmanager.controllo_gruppo(titolo_gruppo_nuovo)) {
+                //scrivo il titolo nuovo nel database
+                dbmanager.uploadTitle(titolo_gruppo_nuovo, titolo_gruppo_vecchio);
+                response.sendRedirect("Invita");
+            } else {
+                out.println(Stampa.header("OPSS!!!"));
+                out.println(Stampa.alert("danger", "Nome del gruppo non valido oppure non sei autorizzato a cambiare il titolo!"));
+                out.println(Stampa.footer());
             }
         }
     }
