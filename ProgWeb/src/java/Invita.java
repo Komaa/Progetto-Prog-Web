@@ -57,46 +57,50 @@ public class Invita extends HttpServlet {
                 response.sendRedirect("index.html");
             }
 
-            String titolo_gruppo = request.getParameter("titolo_gruppo");
-            String amministratore = request.getParameter("amministratore");
+            String titolo_gruppo = (String) request.getParameter("titolo_gruppo");
+            String amministratore = (String) request.getParameter("amministratore");
             String action = request.getParameter("action");
-            String invito = request.getParameter("invito");
-
+            String invito = (String) request.getParameter("invito");
+            System.out.println(titolo_gruppo);
+            System.out.println(amministratore);
+            System.out.println(action);
             out.println(Stampa.header("Invita utenti nel gruppo!"));
             out.println("<div class=\"container\">");
+            //(titolo_gruppo != null) && (amministratore != null) && !dbmanager.check_group(titolo_gruppo, amministratore)
             if ((titolo_gruppo != null) && (amministratore != null)) {
                 //se è già creato non bisogna entrarci di nuovo! (sennò duplica tutti gli utenti con le stampe quando refresha la pagina)
                 if (action.equals("2")) {
                     out.println(Stampa.alert("info", "Hai invitato l'utente nel gruppo!"));
                     dbmanager.inserisci_utente(invito, titolo_gruppo);
                     //Ho già creato il gruppo, quindi gli metto un avviso che lo ha già creato
-
-                }else if (!dbmanager.check_group(titolo_gruppo, amministratore)) {
+                }
+                if (action.equals("1")) {
+                    //Creo il database con i dati
+                    dbmanager.creaGruppo(titolo_gruppo, amministratore);
+                    dbmanager.inserisci_amministratore(username, titolo_gruppo);
+                    out.println(Stampa.alert("success", "Il gruppo è stato creato!"));
+                }
+                if (action.equals("3")) {
+                    out.println(Stampa.alert("success", "Hai modificato il nome del gruppo"));
+                }
+                if (action.equals("4")) {
+                    out.println(Stampa.alert("info", "Qui puoi modificare il titolo del gruppo oppure invitare nuovi utenti"));
+                }
+            } else if ((titolo_gruppo != null) && (amministratore != null) && dbmanager.check_group(titolo_gruppo, amministratore)) {
                 out.println(Stampa.alert("danger", "Non sei autorizzato oppure il gruppo è già esistente"));
-            } else  if (action.equals("1")){
-                //Creo il database con i dati
-                dbmanager.inserisci_amministratore(username,titolo_gruppo);
-                out.println(Stampa.alert("success", "Il gruppo è stato creato!"));
-            } else if (action.equals("3")) {
-                out.println(Stampa.alert("success","Hai modificato il nome del gruppo"));
-            } else if (action.equals("4")) {
-                out.println(Stampa.alert("info","Qui puoi modificare il titolo del gruppo oppure invitare nuovi utenti"));
-            }
-            }else{
+            } else {
                 out.println(Stampa.alert("danger", "Ops, errore accesso"));
-       
-            } 
+            }
 
-
-            
             out.println("<div class=\"jumbotron well span6 offset2\">");
             out.println("<div class=\"groupdescrition\">");
 
             //SE sono l'amministratore del gruppo, posso modificargli il nome e generare il pdf 
             if (username.equals(amministratore)) {
                 out.println("<form action=\"cambia_titolo\">Nome gruppo: <input id=\"titolo_gruppo\" type=\"text\" name=\"titolo_gruppo_nuovo\" value=\"" + titolo_gruppo + "\">"
-                        + "<input type=\"hidden\" name=\"titolo_gruppo_vecchio\" value=\"" + titolo_gruppo + "\"><input type=\"hidden\" name=\"action\" value=\"3\">  " + Stampa.button("titolo", "Cambia Titolo") + "</form></br>");
-                out.println("<form action=\"GeneraPdf\">" + Stampa.button(titolo_gruppo,"Genera")+"</form>");out.println("</br>");
+                        + "<input type=\"hidden\" name=\"titolo_gruppo_vecchio\" value=\"" + titolo_gruppo + "\"><input type=\"hidden\" name=\"action\" value=\"3\"><input type=\"hidden\" name=\"amministratore\" value=\"" + amministratore + "\"> " + Stampa.button("titolo", "Cambia Titolo") + "</form></br>");
+                out.println("<form action=\"GeneraPdf\">" + Stampa.button(titolo_gruppo, "Genera") + "</form>");
+                out.println("</br>");
                 out.println("Amministratore gruppo: " + amministratore + "</br></br>");
                 out.println("<div class=\"userlist\">");
 
@@ -104,7 +108,6 @@ public class Invita extends HttpServlet {
                 stamptable.clear();
 
                 utenti.addAll(dbmanager.listaUtenti(amministratore, titolo_gruppo));
-                System.out.println(utenti.size());
                 Iterator i = utenti.iterator();
                 while (i.hasNext()) {
                     String nome = (String) i.next();

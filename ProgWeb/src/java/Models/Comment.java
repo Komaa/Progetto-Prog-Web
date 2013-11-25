@@ -6,6 +6,7 @@
 
 package Models;
 
+import java.util.ArrayList;
 import java.util.Date;
 
 /**
@@ -24,6 +25,12 @@ public class Comment {
         this.id_utente=id_utente;
         this.id_gruppo=id_gruppo;
         this.data=data;
+    }
+    
+    public static ArrayList<Comment> commento(String text, String id_utente, String id_gruppo, Date data){
+        ArrayList<Comment> commento = null;
+        
+        return commento;
     }
     
 }

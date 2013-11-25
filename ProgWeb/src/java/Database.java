@@ -184,23 +184,6 @@ public class Database implements Serializable {
                     //quindi il gruppo esiste già e non bisogna crearlo!
                     val = true;
                 } else {
-                    Date data_creazione = Calendar.getInstance().getTime();        
-                    SimpleDateFormat ft = new SimpleDateFormat ("yyyy/MM/dd");
-                    String creationDate = ft.format(data_creazione);
-                    
-                    //non esiste e quindi si può creare!
-                    PreparedStatement stm2 = con.prepareStatement("INSERT INTO gruppi (nome_gruppo,amministratore,data) VALUES (?,?,?)");
-                    try {
-                        val = false;
-
-                        stm2.setString(1, titolo_gruppo);
-                        stm2.setString(2, amministratore);
-                        stm2.setString(3, creationDate);
-                        //executeUpdate è per le query di inserimento!
-                        stm2.executeUpdate();
-                    } finally {
-                        stm2.close();
-                    }
                     val = false;
                 }
             } finally {
@@ -250,19 +233,18 @@ public class Database implements Serializable {
         //al momento ho messo uno stato "1" se sono invitati
         PreparedStatement stm = con.prepareStatement("INSERT INTO gruppi_utenti (utente,gruppo,stato) VALUES (?,?,?)");
         try {
-            val = false;
-
             stm.setString(1, utente);
             stm.setString(2, titolo_gruppo);
             stm.setString(3, "1");
             //executeUpdate è per le query di inserimento!
             stm.executeUpdate();
+            val = true;
         } finally {
             stm.close();
 
         }
-        val = false;
-        return false;
+        
+        return val;
     }
 
     public void accetto_invito(String titolo_gruppo, String username) throws SQLException {
@@ -455,6 +437,50 @@ public class Database implements Serializable {
         }
 
         return commento;
+    }
+
+    public boolean creaGruppo(String titolo_gruppo, String amministratore) throws SQLException {
+        
+        boolean val = false;
+
+        PreparedStatement stm = con.prepareStatement("select * from gruppi where nome_gruppo=? and amministratore=?");
+        try {
+            stm.setString(1, titolo_gruppo);
+            stm.setString(2, amministratore);
+
+            ResultSet rs = stm.executeQuery();
+            try {
+                if (rs.next()) {
+                    //quindi il gruppo esiste già e non bisogna crearlo!
+                    val = true;
+                } else {
+                    Date data_creazione = Calendar.getInstance().getTime();        
+                    SimpleDateFormat ft = new SimpleDateFormat ("yyyy/MM/dd");
+                    String creationDate = ft.format(data_creazione);
+                    
+                    //non esiste e quindi si può creare!
+                    PreparedStatement stm2 = con.prepareStatement("INSERT INTO gruppi (nome_gruppo,amministratore,data) VALUES (?,?,?)");
+                    try {
+                        val = false;
+
+                        stm2.setString(1, titolo_gruppo);
+                        stm2.setString(2, amministratore);
+                        stm2.setString(3, creationDate);
+                        //executeUpdate è per le query di inserimento!
+                        stm2.executeUpdate();
+                    } finally {
+                        stm2.close();
+                    }
+                    val = false;
+                }
+            } finally {
+                rs.close();
+            }
+        } finally {
+            stm.close();
+        }
+
+        return val;
     }
 
  

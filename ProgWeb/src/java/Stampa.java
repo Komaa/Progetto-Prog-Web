@@ -80,7 +80,7 @@ public class Stampa {
 
     public static String button(String value, String azione) {
         //azione semplicemente è il valore che c'è dentro il bottone: invita, crea, ecc
-        String button = "<button class=\"btn btn-success\" type=\"submit\" name=\"" + azione + "\" value=\"" + value + "\">" + azione + "</button>";
+        String button = "<button class=\"btn btn-success\" type=\"submit\" name=\""+azione+"\" value=\""+value+"\">" + azione + "</button>";
 
         return button;
     }

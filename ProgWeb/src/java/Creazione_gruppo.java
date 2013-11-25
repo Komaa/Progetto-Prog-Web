@@ -52,7 +52,7 @@ Database dbmanager = new Database();   /**
             out.println("<input id=\"action\" type=\"hidden\" name=\"action\" value=\"1\">");
             out.println(Stampa.div(1));out.println("</br>");
             out.println("<hr>");
-            out.println(Stampa.button("crea","crea!"));
+            out.println(Stampa.button("","crea!"));
             out.println("</form>");
             out.println(Stampa.div(1));
             out.println(Stampa.footer());

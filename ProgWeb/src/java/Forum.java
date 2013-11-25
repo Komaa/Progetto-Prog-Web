@@ -4,8 +4,15 @@
  * and open the template in the editor.
  */
 
+import Models.Comment;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Iterator;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -17,7 +24,10 @@ import javax.servlet.http.HttpSession;
  * @author HaoIlMito
  */
 public class Forum extends HttpServlet {
-
+    
+     Database dbmanager = new Database();  
+    
+    
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -36,7 +46,7 @@ public class Forum extends HttpServlet {
             String username = (String) session.getAttribute("username");        //nel doFilter
             if (username == null) {
                 response.sendRedirect("index.html");
-            }   
+            }
             
             String titolo_gruppo = request.getParameter("Accedi");
             
@@ -44,9 +54,17 @@ public class Forum extends HttpServlet {
             out.println("<div class=\"jumbotron well span6 offset2\">");
             
             out.println("<div class=\"comments\">");
-            out.println(Stampa.div(1));
             
-            out.println(Stampa.div(1));
+            //stampo tutti i commenti nella pagina
+
+           
+            
+            //stampo il form per inserire i commenti
+                
+
+            
+            
+            out.println(Stampa.div(2));
             out.println(Stampa.footer());
         }
     }
