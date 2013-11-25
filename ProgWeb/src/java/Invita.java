@@ -59,6 +59,7 @@ public class Invita extends HttpServlet {
 
             out.println(Stampa.header("Invita utenti nel gruppo!"));
             out.println("<div class=\"container\">");
+            System.out.println(titolo_gruppo);
             System.out.println(amministratore);
             if ((titolo_gruppo != null) && (amministratore != null)) {
                 //se è già creato non bisogna entrarci di nuovo! (sennò duplica tutti gli utenti con le stampe quando refresha la pagina)
@@ -67,7 +68,7 @@ public class Invita extends HttpServlet {
                     dbmanager.inserisci_utente(invito, titolo_gruppo);
                     //Ho già creato il gruppo, quindi gli metto un avviso che lo ha già creato
 
-                }else if (dbmanager.check_group(titolo_gruppo, amministratore)) {
+                }else if (!dbmanager.check_group(titolo_gruppo, amministratore)) {
                 out.println(Stampa.alert("danger", "Non sei autorizzato oppure il gruppo è già esistente"));
             } else  if (action.equals("1")){
                 //Creo il database con i dati
@@ -75,12 +76,14 @@ public class Invita extends HttpServlet {
                 out.println(Stampa.alert("success", "Il gruppo è stato creato!"));
             } else if (action.equals("3")) {
                 out.println(Stampa.alert("success","Hai modificato il nome del gruppo"));
-            } 
+            } else if (action.equals("4")) {
+                out.println(Stampa.alert("info","Qui puoi modificare il titolo del gruppo oppure invitare nuovi utenti"));
+            }
             }else{
                 out.println(Stampa.alert("danger", "Ops, errore accesso"));
        
             } 
-
+            System.out.println(titolo_gruppo);
             out.println("<div class=\"jumbotron well span6 offset2\">");
             out.println("<div class=\"groupdescrition\">");
 

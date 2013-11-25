@@ -24,6 +24,14 @@
         <servlet-name>Gruppi</servlet-name>
         <servlet-class>Gruppi</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>Forum</servlet-name>
+        <servlet-class>Forum</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>Genera_pdf</servlet-name>
+        <servlet-class>Genera_pdf</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>NewServlet1</servlet-name>
         <url-pattern>/NewServlet1</url-pattern>
@@ -71,6 +79,14 @@
     <servlet-mapping>
         <servlet-name>Gruppi</servlet-name>
         <url-pattern>/Gruppi</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>Forum</servlet-name>
+        <url-pattern>/Forum</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>Genera_pdf</servlet-name>
+        <url-pattern>/Genera_pdf</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>

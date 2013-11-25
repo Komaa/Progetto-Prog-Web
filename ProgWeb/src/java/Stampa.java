@@ -169,7 +169,7 @@ public class Stampa {
 
     public static String table_gruppi(String nome, ArrayList<String> colums, ArrayList<ArrayList<String>> rows) throws SQLException {
         ArrayList<String> riga;
-        String table = "<table class=\"table table-striped\">", app, value = null;
+        String table = "<table class=\"table table-striped\">", app, gruppo = null;
         table += "<tr>";
         Iterator iter = colums.iterator();
         while (iter.hasNext()) {
@@ -177,7 +177,7 @@ public class Stampa {
         }
         table += "</tr>";
         Iterator i = rows.iterator();
-        System.out.println("ci sono");
+
         while (i.hasNext()) {
             System.out.println("ci entro");
             table += "<tr>";
@@ -191,15 +191,20 @@ public class Stampa {
                 System.out.println("nome:" + nome);
                 if (app.substring(0, 1).equals("&")) {
                     table += "<td><form action=\"" + (String) iterator.next() + "\">";
-                    table += button(value, "Accedi");
+                    table += button(gruppo, "Accedi");
                     table += "</form></td>";
-                } else if (dbmanager.controllo_amministratore(value, nome) && app.substring(0, 1).equals("%")) {
-                    table += "<form action=\"Invita\"><td><input id=\"amministratore_gruppo\" type=\"hidden\" name=\"titolo_gruppo\" value=\"" + app + "></td>";
-                    table += Stampa.button(value, "Gestisci") + "</form>";
-                    value = app;
+                } else if (dbmanager.controllo_amministratore(gruppo, nome) && app.substring(0, 1).equals("%")) {
+                    table += "<td><form action=\"" + (String) iterator.next() +"\">";
+                    table += "<input id=\""+app.substring(1)+"\" type=\"hidden\" name=\""+app.substring(1)+"\" value=\"" + gruppo + "\">";
+                    table += "<input id=\"action\" type=\"hidden\" name=\"action\" value=\"4\">";
+                    table += "<input type=\"hidden\" name=\"amministratore\" value=\""+nome+"\">";    
+                    table += Stampa.button(gruppo, "Gestisci") + "</form></td>";
+                } else if (!dbmanager.controllo_amministratore(gruppo, nome) && app.substring(0, 1).equals("%")) {
+                    iterator.next();
+                    table += "<td>"+Stampa.alert("info","Non sei l'amministratore")+"</td>";
                 } else {
-                    table += "<td>" + Stampa.alert("info", "Non sei l'amministratore del gruppo!") + "</td>";
-                    value = app;
+                    table += "<td>" + app + "</td>";
+                    gruppo = app;
                 }
             }
             table += "</tr>";
