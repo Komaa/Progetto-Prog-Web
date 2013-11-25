@@ -81,9 +81,7 @@ public class GeneraPdf extends HttpServlet {
 //
 //            String nome_pdf = titolo_gruppo + ".pdf";
 //            System.out.println(nome_pdf);
-            
-        response.setContentType("application/pdf");
-
+           
 
 		// step 1: creation of a document-object
 		Document document = new Document();
@@ -135,13 +133,14 @@ public class GeneraPdf extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        response.setContentType("application/pdf");
         try {
             processRequest(request, response);
+        } catch (DocumentException de) {
+            throw new IOException(de.getMessage());
         } catch (SQLException ex) {
             Logger.getLogger(GeneraPdf.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (DocumentException ex) {
-            Logger.getLogger(GeneraPdf.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        } 
     }
 
     /**
