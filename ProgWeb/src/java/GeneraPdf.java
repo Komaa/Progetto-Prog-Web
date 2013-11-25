@@ -1,9 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 import com.itextpdf.text.Chunk;
 import java.io.IOException;
 import java.util.Date;
@@ -19,13 +13,18 @@ import com.itextpdf.text.FontFactory;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.Phrase;
 import com.itextpdf.text.pdf.PdfWriter;
+import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
+import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.servlet.http.HttpSession;
 
 /**
  *
@@ -50,78 +49,68 @@ public class GeneraPdf extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException, SQLException, DocumentException {
         response.setContentType("text/html;charset=UTF-8");
-        try (PrintWriter out = response.getWriter()) {
-//            //creo la lista degli utenti
-//            HttpSession session = request.getSession(true);//creo la sessione   //mettere le prossime 5 righe al filtro
-//            String username = (String) session.getAttribute("username");        //nel doFilter
-//            if (username == null) {
-//                response.sendRedirect("index.html");
-//            }
-//
-//            String titolo_gruppo = request.getParameter("Genera");
-//            System.out.println(titolo_gruppo);
-//            ArrayList<String> utenti = dbmanager.listaUtenti(username, titolo_gruppo);
-//            utenti.add(username);
-//            System.out.println("Utenti: " + utenti.size());
-//
-//            //creo la lista dei post fatti
-//            int commenti = dbmanager.contaCommenti(titolo_gruppo);
-//            System.out.println("commenti: " + commenti);
-//            //creo la data dell'ultimo post
-//
-//            Date ultimo_post = dbmanager.ultimoPost(titolo_gruppo);
-//            SimpleDateFormat ft = new SimpleDateFormat("yyyy/MM/dd");
-//
-//            if (ultimo_post != null) {
-//                String ultimo_post_string = ft.format(ultimo_post);
-//                System.out.println(ultimo_post);
-//            }
-//            //temporanea
-//            String ultimo_post_string = null;
-//
-//            String nome_pdf = titolo_gruppo + ".pdf";
-//            System.out.println(nome_pdf);
-            
+    
+            //creo la lista degli utenti
+            HttpSession session = request.getSession(true);//creo la sessione   //mettere le prossime 5 righe al filtro
+            String username = (String) session.getAttribute("username");        //nel doFilter
+            if (username == null) {
+                response.sendRedirect("index.html");
+            }
+
+            String titolo_gruppo = request.getParameter("Genera");
+            System.out.println(titolo_gruppo);
+            ArrayList<String> utenti = dbmanager.listaUtenti(username, titolo_gruppo);
+            utenti.add(username);
+            System.out.println("Utenti: " + utenti.size());
+
+            //creo la lista dei post fatti
+            int commenti = dbmanager.contaCommenti(titolo_gruppo);
+            System.out.println("commenti: " + commenti);
+            //creo la data dell'ultimo post
+
+            Date ultimo_post = dbmanager.ultimoPost(titolo_gruppo);
+            SimpleDateFormat ft = new SimpleDateFormat("yyyy/MM/dd");
+
+            if (ultimo_post != null) {
+                String ultimo_post_string = ft.format(ultimo_post);
+                System.out.println(ultimo_post);
+            }
+            //temporanea
+            String ultimo_post_string = null;
+
+            String nome_pdf = titolo_gruppo + ".pdf";
+            System.out.println(nome_pdf);
+           
+
+            // Get the text that will be added to the PDF
+            String text = request.getParameter("Genera");
+        try {
         response.setContentType("application/pdf");
-
-
-		// step 1: creation of a document-object
-		Document document = new Document();
-		try {
-		// step 2:
-		// we create a writer that listens to the document
-		PdfWriter.getInstance(document, new FileOutputStream("Paragraphs.pdf"));
-
-		// step 3: we open the document
-		document.open();
-		// step 4:
-                Paragraph p1 = new Paragraph(new Chunk( "This is my first paragraph. ",
-                    FontFactory.getFont(FontFactory.HELVETICA, 10)));
-                p1.add("The leading of this paragraph is calculated automagically. ");
-                p1.add("The default leading is 1.5 times the fontsize. ");
-                p1.add(new Chunk("You can add chunks "));
-                p1.add(new Phrase("or you can add phrases. "));
-                p1.add(new Phrase(
-                    "Unless you change the leading with the method setLeading, the leading doesn't change if you add text with another leading. This can lead to some problems.",
-                    FontFactory.getFont(FontFactory.HELVETICA, 18)));
-                document.add(p1);
-                Paragraph p2 = new Paragraph(new Phrase("This is my second paragraph. ", FontFactory.getFont(
-                                FontFactory.HELVETICA, 12)));
-                p2.add("As you can see, it started on a new line.");
-                document.add(p2);
-                Paragraph p3 = new Paragraph("This is my third paragraph.",
-                            FontFactory.getFont(FontFactory.HELVETICA, 12));
-               document.add(p3);
-		} catch (    DocumentException | IOException de) {
-			System.err.println(de.getMessage());
-		}
-
-		// step 5: we close the document
-		document.close();
-
-
-    }
-}
+       
+            // step 1
+            Document document = new Document();
+            // step 2
+            PdfWriter.getInstance(document, response.getOutputStream());
+            // step 3
+            document.open();
+            // step 4
+            document.add(new Paragraph("Report del gruppo: "+titolo_gruppo));
+            document.add(new Paragraph("Gli utenti registrati sono: " ));
+            Iterator i = utenti.iterator();
+                while (i.hasNext()) {
+                   String nome = (String) i.next();
+                   document.add(new Chunk(nome+" "));
+                } 
+            document.add(new Paragraph("Il numero di post nel gruppo è: " + commenti));
+            document.add(new Paragraph("La data dell'ultimo post è: " + ultimo_post_string));
+            // step 5
+            document.close();
+        } catch (DocumentException de) {
+            throw new IOException(de.getMessage());
+        }
+  
+        }
+    
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
@@ -137,11 +126,11 @@ public class GeneraPdf extends HttpServlet {
             throws ServletException, IOException {
         try {
             processRequest(request, response);
+        } catch (DocumentException de) {
+            throw new IOException(de.getMessage());
         } catch (SQLException ex) {
             Logger.getLogger(GeneraPdf.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (DocumentException ex) {
-            Logger.getLogger(GeneraPdf.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        } 
     }
 
     /**
