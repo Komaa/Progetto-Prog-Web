@@ -61,9 +61,7 @@ public class Invita extends HttpServlet {
             String amministratore = (String) request.getParameter("amministratore");
             String action = request.getParameter("action");
             String invito = (String) request.getParameter("invito");
-            System.out.println(titolo_gruppo);
-            System.out.println(amministratore);
-            System.out.println(action);
+            String realPath = getServletContext().getRealPath("/");
             out.println(Stampa.header("Invita utenti nel gruppo!"));
             out.println("<div class=\"container\">");
             //(titolo_gruppo != null) && (amministratore != null) && !dbmanager.check_group(titolo_gruppo, amministratore)
@@ -76,7 +74,8 @@ public class Invita extends HttpServlet {
                 }
                 if (action.equals("1")) {
                     //Creo il database con i dati
-                    dbmanager.creaGruppo(titolo_gruppo, amministratore);
+                    
+                    dbmanager.creaGruppo(titolo_gruppo, amministratore,realPath);
                     dbmanager.inserisci_amministratore(username, titolo_gruppo);
                     out.println(Stampa.alert("success", "Il gruppo è stato creato!"));
                 }
@@ -98,7 +97,7 @@ public class Invita extends HttpServlet {
             //SE sono l'amministratore del gruppo, posso modificargli il nome e generare il pdf 
             if (username.equals(amministratore)) {
                 out.println("<form action=\"cambia_titolo\">Nome gruppo: <input id=\"titolo_gruppo\" type=\"text\" name=\"titolo_gruppo_nuovo\" value=\"" + titolo_gruppo + "\">"
-                        + "<input type=\"hidden\" name=\"titolo_gruppo_vecchio\" value=\"" + titolo_gruppo + "\"><input type=\"hidden\" name=\"action\" value=\"3\"><input type=\"hidden\" name=\"amministratore\" value=\"" + amministratore + "\"> " + Stampa.button("titolo", "Cambia Titolo") + "</form></br>");
+                        + "<input type=\"hidden\" name=\"titolo_gruppo_vecchio\" value=\"" + titolo_gruppo + "\"><input type=\"hidden\" name=\"action\" value=\"3\"><input type=\"hidden\" name=\"realPath\" value=\""+realPath +"\"><input type=\"hidden\" name=\"amministratore\" value=\"" + amministratore + "\"> " + Stampa.button("titolo", "Cambia Titolo") + "</form></br>");
                 out.println("<form action=\"GeneraPdf\">" + Stampa.button(titolo_gruppo, "Genera") + "</form>");
                 out.println("</br>");
                 out.println("Amministratore gruppo: " + amministratore + "</br></br>");

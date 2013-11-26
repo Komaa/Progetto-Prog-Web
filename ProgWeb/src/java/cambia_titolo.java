@@ -4,6 +4,7 @@
  * and open the template in the editor.
  */
 
+import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.SQLException;
@@ -46,6 +47,7 @@ public class cambia_titolo extends HttpServlet {
             String titolo_gruppo_nuovo = request.getParameter("titolo_gruppo_nuovo");
             String titolo_gruppo_vecchio = request.getParameter("titolo_gruppo_vecchio");
             String amministratore = request.getParameter("amministratore");
+            String realPath = request.getParameter("realPath");
 
             //controllo di nuovo se il nome non è vuoto/nullo
             //controllo se l'utente che sta cambiando il nome è l'amministratore
@@ -54,6 +56,16 @@ public class cambia_titolo extends HttpServlet {
             if (!(titolo_gruppo_vecchio.equals(titolo_gruppo_nuovo)) && titolo_gruppo_nuovo != null && dbmanager.controllo_amministratore(titolo_gruppo_vecchio, username) && dbmanager.controllo_gruppo(titolo_gruppo_nuovo)) {
                 //scrivo il titolo nuovo nel database
                 dbmanager.uploadTitle(titolo_gruppo_nuovo, titolo_gruppo_vecchio);
+                
+                 String dirName= realPath+"groupsfolder/" + titolo_gruppo_vecchio;
+                 String dirNName= realPath+"groupsfolder/" + titolo_gruppo_nuovo;
+                 
+                    File theDir = new File(dirName);
+                    File theNDir = new File(dirNName);
+                    if (theDir.exists()) {
+                    boolean result = theDir.renameTo(theNDir);  
+                    }
+                    
                 response.sendRedirect("Invita?titolo_gruppo="+titolo_gruppo_nuovo+"&amministratore="+amministratore+"&action=3");
             } else {
                 out.println(Stampa.header("OPSS!!!"));

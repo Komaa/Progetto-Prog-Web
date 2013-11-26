@@ -27,6 +27,7 @@
     <servlet>
         <servlet-name>Forum</servlet-name>
         <servlet-class>Forum</servlet-class>
+        
     </servlet>
     <servlet>
         <servlet-name>Genera_pdf</servlet-name>

@@ -12,6 +12,7 @@ import com.itextpdf.text.FontFactory;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.Phrase;
 import com.itextpdf.text.pdf.PdfWriter;
+import java.io.File;
 
 import java.io.Serializable;
 import java.sql.Connection;
@@ -101,7 +102,7 @@ public class Database implements Serializable {
         String tmp;
         Comment commento;
         ArrayList<Comment> listaCommenti = new ArrayList<Comment>();
-        PreparedStatement stm = con.prepareStatement("select * from comments where id_gruppo=? ORDER BY data");
+        PreparedStatement stm = con.prepareStatement("select * from comments where id_gruppo=? ORDER BY data DESC");
         stm.setString(1, id_gruppo);
         System.out.println(stm);
         try {
@@ -438,7 +439,7 @@ public class Database implements Serializable {
         return commento;
     }
 
-    public boolean creaGruppo(String titolo_gruppo, String amministratore) throws SQLException {
+    public boolean creaGruppo(String titolo_gruppo, String amministratore,String realPath) throws SQLException {
 
         boolean val = false;
 
@@ -453,6 +454,15 @@ public class Database implements Serializable {
                     //quindi il gruppo esiste già e non bisogna crearlo!
                     val = true;
                 } else {
+                    String dirName= realPath+"groupsfolder/" + titolo_gruppo;
+                    File theDir = new File(dirName);
+                    if (!theDir.exists()) {
+                    System.out.println("creating directory: " + dirName);
+                    boolean result = theDir.mkdirs();  
+                    if(result) {    
+                    System.out.println("DIR created");  
+                    }
+                    }
                     Date data_creazione = Calendar.getInstance().getTime();
                     SimpleDateFormat ft = new SimpleDateFormat("yyyy/MM/dd");
                     String creationDate = ft.format(data_creazione);
