@@ -8,10 +8,14 @@ import Models.Comment;
 import com.oreilly.servlet.MultipartRequest;
 import com.oreilly.servlet.multipart.DefaultFileRenamePolicy;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.PrintWriter;
 import static java.lang.System.out;
+import java.nio.file.Path;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -66,6 +70,9 @@ public class Forum extends HttpServlet {
             String messaggio=null;
             String utente=null;
             String titolo_gruppo=null;
+            String namepi=null;
+            String filename=null;
+            String originalFilename=null;
             
             if(!ServletFileUpload.isMultipartContent(request)){
             action=request.getParameter("action");
@@ -89,12 +96,12 @@ public class Forum extends HttpServlet {
 //             System.out.println("FILES:");
              Enumeration files = multi.getFileNames();
                 while (files.hasMoreElements()) {
-                String name = (String)files.nextElement();
-                String filename = multi.getFilesystemName(name);
-                String originalFilename = multi.getOriginalFileName(name);
-                String type = multi.getContentType(name);  
-                File f = multi.getFile(name);
-//                System.out.println("name: " + name);
+                namepi = (String)files.nextElement();
+                filename = multi.getFilesystemName(namepi);
+                originalFilename = multi.getOriginalFileName(namepi);
+                String type = multi.getContentType(namepi);  
+                File f = multi.getFile(namepi);
+//                System.out.println("name: " + namepi);
 //                System.out.println("filename: " + filename);
 //                System.out.println("originalFilename: " + originalFilename);
 //                System.out.println("type: " + type);
@@ -104,16 +111,53 @@ public class Forum extends HttpServlet {
 //                System.out.println("f.exists(): " + f.exists());
 //                System.out.println("f.length(): " + f.length());
                 }
+                
+                }
+                String source= realPath+"tmp/" + originalFilename;
+//                System.out.println("sourEEEEEEEEEEEEEEEEEE:"+ source);
+                String destination= realPath+"groupsfolder/" + titolo_gruppo + "/" + originalFilename;                   
+//                System.out.println("destinationNNNNNNNNNNNNNNNNNNN:"+ destination);
+                 File afile =new File(source);
+                File bfile =new File(destination);
+                if (!(bfile.exists())) {
+                InputStream inStream = null;
+                        OutputStream outStream = null;
+ 
+    	try{
+ 
+            
+    	    
+    	    inStream = new FileInputStream(afile);
+    	    outStream = new FileOutputStream(bfile);
+ 
+    	    byte[] buffer = new byte[1024];
+    	    int length;
+    	    //copy the file content in bytes 
+    	    while ((length = inStream.read(buffer)) > 0){
+    	    	outStream.write(buffer, 0, length);
+    	    }
+    	    inStream.close();
+    	    outStream.close();
+ 
+    	    //delete the original file
+    	    afile.delete();
+            }catch(IOException e){
+    	    e.printStackTrace();
+    	}
+                }else{
+                     out.println(Stampa.alert("danger", "Il file che hai caricato è già presente"));
                 }
             //----------FINE UPLOAD-----
             }
             
             if(action!=null){
             if(action.equals("1")){
-                if((titolo_gruppo!=null)&&(messaggio!=null)&&(dbmanager.checkusertogroup(username,titolo_gruppo))&&(username.equals(utente))){
+                if((titolo_gruppo!=null)&&(messaggio!=null)&&(!messaggio.equals(""))&&(dbmanager.checkusertogroup(username,titolo_gruppo))&&(username.equals(utente))){
                     String cod_gruppo= dbmanager.take_cod_gruppo(titolo_gruppo);
                     String cod_utente= dbmanager.take_cod_utente(username);
                     dbmanager.addcomment(messaggio,cod_gruppo,cod_utente);
+                }else if(messaggio.equals("")){
+                    out.println(Stampa.alert("info", "Per favore inserisci un commento!"));
                 }else{
                 out.println(Stampa.header("OPSS!!!"));
                 out.println(Stampa.alert("danger", "Non fare il furbo"));

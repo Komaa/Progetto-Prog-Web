@@ -190,16 +190,15 @@ public class Stampa {
         Iterator i = rows.iterator();
 
         while (i.hasNext()) {
-            System.out.println("ci entro");
+           
             table += "<tr>";
             riga = (ArrayList<String>) i.next();
             Iterator iterator = riga.iterator();
             while (iterator.hasNext()) {
-                System.out.println("ci entro2");
+                
                 app = (String) iterator.next();
 
-                System.out.println("app:" + app);
-                System.out.println("nome:" + nome);
+               
                 if (app.substring(0, 1).equals("&")) {
                     table += "<td><form action=\"" + (String) iterator.next() + "\">";
                     table += button(gruppo, "Accedi");
@@ -228,10 +227,10 @@ public class Stampa {
         String name=dbmanager.take_name_utente(comment.getId_utente());
         String commento="Testo: ";
           String[] split=comment.getText().split("\\$\\$");
-          System.out.println(split.length);
+     
                     for(int i=0;i<split.length;i++)
                     {
-                        System.out.println(split[i]);
+                        
                         if((i%2)==1){
                         commento+=Stampa.arefnew_ex_page(split[i], split[i]);
                         }else{

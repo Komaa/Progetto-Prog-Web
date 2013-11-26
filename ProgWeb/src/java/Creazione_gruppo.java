@@ -38,8 +38,10 @@ Database dbmanager = new Database();   /**
         try (PrintWriter out = response.getWriter()) {
             
             HttpSession session = request.getSession(true);//creo la sessione   //mettere le prossime 5 righe al filtro
-            String username = (String) session.getAttribute("username");        //nel doFilter
-            
+              String username = (String) session.getAttribute("username");        //nel doFilter
+            if (username == null) {
+                response.sendRedirect("index.html");
+            }
             out.println(Stampa.header("Crea gruppo!"));
             out.println("<div class=\"descriptiongroup\">");
             out.println("<form class=\"form-horizontal well span6 offset2\" name=\"input\" action=\"Invita\" method=\"get\">");
