@@ -1,4 +1,5 @@
 
+import Models.Comment;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -61,6 +62,7 @@ public class Stampa {
         String input = "<input type=\"" + type + "\" name=\"" + name + "\">";
         return input;
     }
+    
 
     public static String div(int num) {
         String div = "</div>";
@@ -211,5 +213,11 @@ public class Stampa {
         }
         table += "</table>";
         return table;
+    }
+
+    static String stampacommento(Comment comment) throws SQLException {
+        String name=dbmanager.take_name_utente(comment.getId_utente());
+       String commento="Testo: "+ comment.getText() + "<br>Autore: " + name + "<br>Data: " + comment.getData()+ "<br><br>";
+       return commento;
     }
 }

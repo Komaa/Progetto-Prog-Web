@@ -1,5 +1,4 @@
 
-
 import static com.sun.org.apache.xalan.internal.lib.ExsltDatetime.date;
 
 import Models.Comment;
@@ -49,7 +48,7 @@ public class Database implements Serializable {
     public Database() {
         try {
             Class.forName("com.mysql.jdbc.Driver").newInstance(); //carica i driver per connettersi al database
-            Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3036/test", "root", "root"); //creo connessione al database   
+            Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/test", "root", "1punto"); //creo connessione al database   
             this.con = con;
         } catch (Exception e) {
             System.out.println("odjfoaijdofsai");
@@ -98,7 +97,7 @@ public class Database implements Serializable {
 
     }
 
-     public ArrayList<Comment> listaCommenti(String id_gruppo) throws SQLException {
+    public ArrayList<Comment> listaCommenti(String id_gruppo) throws SQLException {
         String tmp;
         Comment commento;
         ArrayList<Comment> listaCommenti = new ArrayList<Comment>();
@@ -109,7 +108,7 @@ public class Database implements Serializable {
             ResultSet rs = stm.executeQuery();
             try {
                 while (rs.next()) {
-                    commento= new Comment(rs.getString("commenti"),rs.getString("id_utente"),rs.getString("id_gruppo"),rs.getDate("data"));
+                    commento = new Comment(rs.getString("commenti"), rs.getString("id_utente"), rs.getString("id_gruppo"), rs.getString("data"));
                     listaCommenti.add(commento);
                 }
             } finally {
@@ -122,7 +121,7 @@ public class Database implements Serializable {
         return listaCommenti;
 
     }
-     
+
     public ArrayList<String> listaUtenti(String username, String titolo_gruppo) throws SQLException {
         String tmp;
         ArrayList<String> listautenti = new ArrayList<String>();
@@ -195,8 +194,8 @@ public class Database implements Serializable {
 
         return val;
     }
-    
-        public boolean inserisci_amministratore(String utente, String titolo_gruppo) throws SQLException {
+
+    public boolean inserisci_amministratore(String utente, String titolo_gruppo) throws SQLException {
 
         boolean val = false;
 
@@ -243,7 +242,7 @@ public class Database implements Serializable {
             stm.close();
 
         }
-        
+
         return val;
     }
 
@@ -394,7 +393,7 @@ public class Database implements Serializable {
     }
 
     public int contaCommenti(String titolo_gruppo) throws SQLException {
-    
+
         int commenti = 0;
         PreparedStatement stm = con.prepareStatement("select COUNT(*) from comments where id_gruppo=?");
         stm.setString(1, titolo_gruppo);
@@ -412,22 +411,22 @@ public class Database implements Serializable {
         }
 
         return commenti;
-    
+
     }
-    
+
     public Date ultimoPost(String titolo_gruppo) throws SQLException {
 
         Date commento = null;
 
         PreparedStatement stm = con.prepareStatement("SELECT data from comments where id_gruppo=? ORDER BY data DESC LIMIT 1");
-        
+
         stm.setString(1, titolo_gruppo);
-        
+
         try {
             ResultSet rs = stm.executeQuery();
             try {
                 while (rs.next()) {
-                    commento= rs.getDate("data");
+                    commento = rs.getDate("data");
                 }
             } finally {
                 rs.close();
@@ -440,7 +439,7 @@ public class Database implements Serializable {
     }
 
     public boolean creaGruppo(String titolo_gruppo, String amministratore) throws SQLException {
-        
+
         boolean val = false;
 
         PreparedStatement stm = con.prepareStatement("select * from gruppi where nome_gruppo=? and amministratore=?");
@@ -454,10 +453,10 @@ public class Database implements Serializable {
                     //quindi il gruppo esiste già e non bisogna crearlo!
                     val = true;
                 } else {
-                    Date data_creazione = Calendar.getInstance().getTime();        
-                    SimpleDateFormat ft = new SimpleDateFormat ("yyyy/MM/dd");
+                    Date data_creazione = Calendar.getInstance().getTime();
+                    SimpleDateFormat ft = new SimpleDateFormat("yyyy/MM/dd");
                     String creationDate = ft.format(data_creazione);
-                    
+
                     //non esiste e quindi si può creare!
                     PreparedStatement stm2 = con.prepareStatement("INSERT INTO gruppi (nome_gruppo,amministratore,data) VALUES (?,?,?)");
                     try {
@@ -483,6 +482,101 @@ public class Database implements Serializable {
         return val;
     }
 
- 
+    String take_cod_gruppo(String titolo_gruppo) throws SQLException {
+        PreparedStatement stm = con.prepareStatement("select id_gruppo from gruppi where nome_gruppo=?");
+        stm.setString(1, titolo_gruppo);
+        ResultSet rs = stm.executeQuery();
+        try {
 
+            if (rs.next()) {
+                //esiste il gruppo
+                return rs.getString("id_gruppo");
+            } else {
+                //non esiste il gruppo
+                return null;
+            }
+        } finally {
+            rs.close();
+        }
+
+    }
+    
+    
+    String take_cod_utente(String username) throws SQLException {
+        PreparedStatement stm = con.prepareStatement("select id_utenti from utenti where username=?");
+        stm.setString(1, username);
+        ResultSet rs = stm.executeQuery();
+        try {
+
+            if (rs.next()) {
+                //esiste il gruppo
+                return rs.getString("id_utenti");
+            } else {
+                //non esiste il gruppo
+                return null;
+            }
+        } finally {
+            rs.close();
+        }
+
+    }
+
+    String take_name_utente(String id_utente) throws SQLException {
+    PreparedStatement stm = con.prepareStatement("select username from utenti where id_utenti=?");
+        stm.setString(1, id_utente);
+        ResultSet rs = stm.executeQuery();
+        try {
+
+            if (rs.next()) {
+                //esiste il gruppo
+                return rs.getString("username");
+            } else {
+                //non esiste il gruppo
+                return null;
+            }
+        } finally {
+            rs.close();
+        }
+    }
+//Controlla che l'utente appartenga per davvero a quel gruppo
+    boolean checkusertogroup(String username, String titolo_gruppo) throws SQLException {
+           
+        PreparedStatement stm = con.prepareStatement("select * from gruppi_utenti where gruppo=? and utente=? and stato=2");
+        try {
+            stm.setString(1, titolo_gruppo);
+            stm.setString(2, username);
+            ResultSet rs = stm.executeQuery();
+            try {
+                if (rs.next()) {
+                   return true;
+                } else {
+                   return false;
+                }
+            } finally {
+                rs.close();
+            }
+        } finally {
+            stm.close();
+        }
+
+     
+   }
+
+    void addcomment(String messaggio, String cod_gruppo, String cod_utente) throws SQLException {
+        Date data_creazione = Calendar.getInstance().getTime();
+        SimpleDateFormat ft = new SimpleDateFormat("yyyy/MM/dd");
+        String creationDate = ft.format(data_creazione);
+        PreparedStatement stm = con.prepareStatement("INSERT INTO comments (id_utente, id_gruppo, data, commenti)VALUES (?, ?, ?, ?)");
+        try {
+            stm.setString(1, cod_utente);
+            stm.setString(2, cod_gruppo);
+            stm.setString(3, creationDate);
+            stm.setString(4, messaggio);
+            int rs = stm.executeUpdate();
+        } finally {
+            stm.close();
+        }
+ }
+
+   
 }

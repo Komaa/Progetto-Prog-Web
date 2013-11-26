@@ -14,23 +14,57 @@ import java.util.Date;
  * @author pietro
  */
 public class Comment {
-    String text, id_utente, id_gruppo;
-    Date data;
+     private String text, id_utente, id_gruppo, data;
 
     public Comment() {
     }
     
-    public Comment(String text, String id_utente, String id_gruppo, Date data){
+    public Comment(String text, String id_utente, String id_gruppo, String data){
         this.text=text;
         this.id_utente=id_utente;
         this.id_gruppo=id_gruppo;
         this.data=data;
     }
     
-    public static ArrayList<Comment> commento(String text, String id_utente, String id_gruppo, Date data){
+    public static ArrayList<Comment> commento(String text, String id_utente, String id_gruppo, String data){
         ArrayList<Comment> commento = null;
         
         return commento;
     }
+
+    public void setText(String text) {
+        this.text = text;
+    }
+
+    public void setId_utente(String id_utente) {
+        this.id_utente = id_utente;
+    }
+
+    public void setId_gruppo(String id_gruppo) {
+        this.id_gruppo = id_gruppo;
+    }
+
+    public void setData(String data) {
+        this.data = data;
+    }
+
+    
+    public String getText() {
+        return text;
+    }
+
+    public String getId_utente() {
+        return id_utente;
+    }
+
+    public String getId_gruppo() {
+        return id_gruppo;
+    }
+
+    public String getData() {
+        return data;
+    }
+    
+    
     
 }
