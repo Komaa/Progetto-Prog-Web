@@ -101,7 +101,7 @@ public class Database implements Serializable {
         String tmp;
         Comment commento;
         ArrayList<Comment> listaCommenti = new ArrayList<Comment>();
-        PreparedStatement stm = con.prepareStatement("select * from comments where id_gruppo=?");
+        PreparedStatement stm = con.prepareStatement("select * from comments where id_gruppo=? ORDER BY data");
         stm.setString(1, id_gruppo);
         System.out.println(stm);
         try {
@@ -564,7 +564,7 @@ public class Database implements Serializable {
 
     void addcomment(String messaggio, String cod_gruppo, String cod_utente) throws SQLException {
         Date data_creazione = Calendar.getInstance().getTime();
-        SimpleDateFormat ft = new SimpleDateFormat("yyyy/MM/dd");
+        SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String creationDate = ft.format(data_creazione);
         PreparedStatement stm = con.prepareStatement("INSERT INTO comments (id_utente, id_gruppo, data, commenti)VALUES (?, ?, ?, ?)");
         try {

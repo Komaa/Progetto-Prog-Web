@@ -217,7 +217,19 @@ public class Stampa {
 
     static String stampacommento(Comment comment) throws SQLException {
         String name=dbmanager.take_name_utente(comment.getId_utente());
-       String commento="Testo: "+ comment.getText() + "<br>Autore: " + name + "<br>Data: " + comment.getData()+ "<br><br>";
+        String commento="Testo: ";
+          String[] split=comment.getText().split("\\$\\$");
+          System.out.println(split.length);
+                    for(int i=0;i<split.length;i++)
+                    {
+                        System.out.println(split[i]);
+                        if((i%2)==1){
+                        commento+=Stampa.aref(split[i], split[i]);
+                        }else{
+                        commento+=split[i];
+                        }
+                    }
+       commento+="<br>Autore: " + name + "<br>Data: " + comment.getData()+ "<br><br>";
        return commento;
     }
 }
