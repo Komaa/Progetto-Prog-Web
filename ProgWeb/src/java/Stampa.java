@@ -46,6 +46,15 @@ public class Stampa {
 
         return href;
     }
+    
+      public static String arefnew_ex_page(String ref, String testo) {
+        
+        String href = "<a href=\"http://";
+        href += ref;
+        href += "\"  target=\"_blank\"> " + testo + "</a>";
+
+        return href;
+    }
 
     public static String sezione() {
         String sezione = "";
@@ -224,7 +233,7 @@ public class Stampa {
                     {
                         System.out.println(split[i]);
                         if((i%2)==1){
-                        commento+=Stampa.aref(split[i], split[i]);
+                        commento+=Stampa.arefnew_ex_page(split[i], split[i]);
                         }else{
                         commento+=split[i];
                         }
