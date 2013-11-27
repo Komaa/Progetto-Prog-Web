@@ -235,6 +235,7 @@ public class Stampa {
     static String stampacommento(Comment comment,String dirName,String relativName) throws SQLException {
         String name=dbmanager.take_name_utente(comment.getId_utente());
         String commento="Testo: ";
+        String relName= relativName;
           String[] split=comment.getText().split("\\$\\$");
      
                     for(int i=0;i<split.length;i++)
@@ -244,7 +245,7 @@ public class Stampa {
                          
                  dirName+= "/" + split[i];
                  relativName+= "/" + split[i];
-                            System.err.println(dirName);
+                           
                     File theDir = new File(dirName); 
                     if (theDir.exists()) {  
                         commento+=Stampa.arefnew__page(relativName, split[i]);
@@ -255,7 +256,16 @@ public class Stampa {
                         commento+=split[i];
                         }
                     }
-       commento+="<br>Autore: " + name + "<br>Data: " + comment.getData()+ "<br><br>";
+       commento+="<br>Autore: " + name + "<br>Data: " + comment.getData()+ "<br>";
+       String allegato=comment.getAllegato();
+       if(!allegato.equals("noallegato")){
+        commento+="Allegato: ";  
+        relName+= "/" + allegato;
+        commento+=Stampa.arefnew__page(relName, allegato)+"<br><br>";
+       }else{
+        commento+="Allegato: Nessun allegato aggiunto<br><br>";     
+       }
+       
        return commento;
     }
 }

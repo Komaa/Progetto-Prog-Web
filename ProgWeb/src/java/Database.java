@@ -109,7 +109,7 @@ public class Database implements Serializable {
             ResultSet rs = stm.executeQuery();
             try {
                 while (rs.next()) {
-                    commento = new Comment(rs.getString("commenti"), rs.getString("id_utente"), rs.getString("id_gruppo"), rs.getString("data"));
+                    commento = new Comment(rs.getString("commenti"), rs.getString("id_utente"), rs.getString("id_gruppo"), rs.getString("data"), rs.getString("allegato"));
                     listaCommenti.add(commento);
                 }
             } finally {
@@ -572,16 +572,17 @@ public class Database implements Serializable {
      
    }
 
-    void addcomment(String messaggio, String cod_gruppo, String cod_utente) throws SQLException {
+    void addcomment(String messaggio, String cod_gruppo, String cod_utente,String originalFilename) throws SQLException {
         Date data_creazione = Calendar.getInstance().getTime();
         SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String creationDate = ft.format(data_creazione);
-        PreparedStatement stm = con.prepareStatement("INSERT INTO comments (id_utente, id_gruppo, data, commenti)VALUES (?, ?, ?, ?)");
+        PreparedStatement stm = con.prepareStatement("INSERT INTO comments (id_utente, id_gruppo, data, commenti, allegato)VALUES (?, ?, ?, ?, ?)");
         try {
             stm.setString(1, cod_utente);
             stm.setString(2, cod_gruppo);
             stm.setString(3, creationDate);
             stm.setString(4, messaggio);
+            stm.setString(5, originalFilename);
             int rs = stm.executeUpdate();
         } finally {
             stm.close();

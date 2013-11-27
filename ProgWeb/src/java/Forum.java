@@ -71,9 +71,9 @@ public class Forum extends HttpServlet {
             String titolo_gruppo = null;
             String namepi = null;
             String filename = null;
-            String originalFilename = null;
+            String originalFilename = "noallegato";
             String realPath = getServletContext().getRealPath("/");
-            
+
             if (!ServletFileUpload.isMultipartContent(request)) {
                 action = request.getParameter("action");
                 utente = request.getParameter("utente");
@@ -81,7 +81,6 @@ public class Forum extends HttpServlet {
             } else {
 
                 //---------------------Upload eventuale file
-                
                 String dirName = realPath + "tmp";
 
                 MultipartRequest multi = new MultipartRequest(request, dirName, 10 * 1024 * 1024, "ISO-8859-1", new DefaultFileRenamePolicy());
@@ -91,60 +90,66 @@ public class Forum extends HttpServlet {
                 utente = multi.getParameter("utente");
                 titolo_gruppo = multi.getParameter("Accedi");
                 if (messaggio.equals("")) {
-                        out.println(Stampa.alert("danger", "E' obbligatorio inserire un commento!"));
-                }else{
+                    out.println(Stampa.alert("danger", "E' obbligatorio inserire un commento!"));
+    
+                } else {
 //             System.out.println("FILES:");
-                Enumeration files = multi.getFileNames();
-                while (files.hasMoreElements()) {
-                    namepi = (String) files.nextElement();
-                    filename = multi.getFilesystemName(namepi);
-                    originalFilename = multi.getOriginalFileName(namepi);
-                    String type = multi.getContentType(namepi);
-                    File f = multi.getFile(namepi);
+                    Enumeration files = multi.getFileNames();
+                    while (files.hasMoreElements()) {
+                        namepi = (String) files.nextElement();
+                        filename = multi.getFilesystemName(namepi);
+                        originalFilename = multi.getOriginalFileName(namepi);
+                        String type = multi.getContentType(namepi);
+                        File f = multi.getFile(namepi);
 //                System.out.println("name: " + namepi);
 //                System.out.println("filename: " + filename);
 //                System.out.println("originalFilename: " + originalFilename);
 //                System.out.println("type: " + type);
-                    if (f != null) {
+                        if (f != null) {
 //                System.out.println("f.toString(): " + f.toString());
 //                System.out.println("f.getName(): " + f.getName());
 //                System.out.println("f.exists(): " + f.exists());
 //                System.out.println("f.length(): " + f.length());
-                    }
-
-                }
-                String source = realPath + "tmp/" + originalFilename;
-//                System.out.println("sourEEEEEEEEEEEEEEEEEE:"+ source);
-                String destination = realPath + "groupsfolder/" + titolo_gruppo + "/" + originalFilename;
-//                System.out.println("destinationNNNNNNNNNNNNNNNNNNN:"+ destination);
-                File afile = new File(source);
-                File bfile = new File(destination);
-                if (!(bfile.exists())) {
-                    InputStream inStream = null;
-                    OutputStream outStream = null;
-
-                    try {
-
-                        inStream = new FileInputStream(afile);
-                        outStream = new FileOutputStream(bfile);
-
-                        byte[] buffer = new byte[1024];
-                        int length;
-                        //copy the file content in bytes 
-                        while ((length = inStream.read(buffer)) > 0) {
-                            outStream.write(buffer, 0, length);
                         }
-                        inStream.close();
-                        outStream.close();
-
-                        //delete the original file
-                        afile.delete();
-                    } catch (IOException e) {
-                        e.printStackTrace();
                     }
-                } else {
-                    out.println(Stampa.alert("danger", "Il file che hai caricato è già presente"));
-                }
+                    if(originalFilename!=null){
+                        String source = realPath + "tmp/" + originalFilename;
+//                System.out.println("sourEEEEEEEEEEEEEEEEEE:"+ source);
+                        String destination = realPath + "groupsfolder/" + titolo_gruppo + "/" + originalFilename;
+//                System.out.println("destinationNNNNNNNNNNNNNNNNNNN:"+ destination);
+                        File afile = new File(source);
+                        File bfile = new File(destination);
+                        if (!(bfile.exists())) {
+                            InputStream inStream = null;
+                            OutputStream outStream = null;
+
+                            try {
+
+                                inStream = new FileInputStream(afile);
+                                outStream = new FileOutputStream(bfile);
+
+                                byte[] buffer = new byte[1024];
+                                int length;
+                                //copy the file content in bytes 
+                                while ((length = inStream.read(buffer)) > 0) {
+                                    outStream.write(buffer, 0, length);
+                                }
+                                inStream.close();
+                                outStream.close();
+
+                                //delete the original file
+                                afile.delete();
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+
+                        } else {
+                            out.println(Stampa.alert("danger", "Il file che hai caricato è già presente"));
+                            afile.delete();
+                        }
+                    }else{
+                        originalFilename = "noallegato";
+                    }
                 }
                 //----------FINE UPLOAD-----
             }
@@ -154,8 +159,9 @@ public class Forum extends HttpServlet {
                     if ((titolo_gruppo != null) && (messaggio != null) && (!messaggio.equals("")) && (dbmanager.checkusertogroup(username, titolo_gruppo)) && (username.equals(utente))) {
                         String cod_gruppo = dbmanager.take_cod_gruppo(titolo_gruppo);
                         String cod_utente = dbmanager.take_cod_utente(username);
-                        dbmanager.addcomment(messaggio, cod_gruppo, cod_utente);
-                    } else if (messaggio.equals("")) {} else {
+                        dbmanager.addcomment(messaggio, cod_gruppo, cod_utente, originalFilename);
+                    } else if (messaggio.equals("")) {
+                    } else {
                         out.println(Stampa.header("OPSS!!!"));
                         out.println(Stampa.alert("danger", "Non fare il furbo"));
                         out.println(Stampa.footer());
@@ -172,9 +178,9 @@ public class Forum extends HttpServlet {
             ArrayList<Comment> listaCommenti = dbmanager.listaCommenti(cod_gruppo);
             Iterator it = listaCommenti.iterator();
             while (it.hasNext()) {
-                String dirpath= realPath+"groupsfolder/" + titolo_gruppo;
-                String relativName= "groupsfolder/" + titolo_gruppo;
-                out.println(Stampa.stampacommento((Comment) it.next(),dirpath,relativName));
+                String dirpath = realPath + "groupsfolder/" + titolo_gruppo;
+                String relativName = "groupsfolder/" + titolo_gruppo;
+                out.println(Stampa.stampacommento((Comment) it.next(), dirpath, relativName));
             }
             out.println(Stampa.div(1));
             //stampo il form per inserire i commenti

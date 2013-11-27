@@ -14,16 +14,17 @@ import java.util.Date;
  * @author pietro
  */
 public class Comment {
-     private String text, id_utente, id_gruppo, data;
+     private String text, id_utente, id_gruppo, data, allegato;
 
     public Comment() {
     }
     
-    public Comment(String text, String id_utente, String id_gruppo, String data){
+    public Comment(String text, String id_utente, String id_gruppo, String data, String allegato){
         this.text=text;
         this.id_utente=id_utente;
         this.id_gruppo=id_gruppo;
         this.data=data;
+        this.allegato=allegato;
     }
     
     public static ArrayList<Comment> commento(String text, String id_utente, String id_gruppo, String data){
@@ -47,6 +48,10 @@ public class Comment {
     public void setData(String data) {
         this.data = data;
     }
+    
+    public void setAlegato(String allegato) {
+        this.allegato = allegato;
+    }
 
     
     public String getText() {
@@ -63,6 +68,10 @@ public class Comment {
 
     public String getData() {
         return data;
+    }
+    
+    public String getAllegato() {
+        return allegato;
     }
     
     
