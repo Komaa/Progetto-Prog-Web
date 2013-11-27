@@ -1,5 +1,6 @@
 
 import Models.Comment;
+import java.io.File;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -52,6 +53,14 @@ public class Stampa {
         String href = "<a href=\"http://";
         href += ref;
         href += "\"  target=\"_blank\"> " + testo + "</a>";
+
+        return href;
+    }
+      
+      public static String arefnew__page(String ref, String testo) {
+        
+        String href = "<a href=\""+ ref;
+        href += "\"  target=\"_blank\">" + testo + "</a>";
 
         return href;
     }
@@ -223,7 +232,7 @@ public class Stampa {
         return table;
     }
 
-    static String stampacommento(Comment comment) throws SQLException {
+    static String stampacommento(Comment comment,String dirName,String relativName) throws SQLException {
         String name=dbmanager.take_name_utente(comment.getId_utente());
         String commento="Testo: ";
           String[] split=comment.getText().split("\\$\\$");
@@ -232,7 +241,16 @@ public class Stampa {
                     {
                         
                         if((i%2)==1){
+                         
+                 dirName+= "/" + split[i];
+                 relativName+= "/" + split[i];
+                            System.err.println(dirName);
+                    File theDir = new File(dirName); 
+                    if (theDir.exists()) {  
+                        commento+=Stampa.arefnew__page(relativName, split[i]);
+                    }else{
                         commento+=Stampa.arefnew_ex_page(split[i], split[i]);
+                    }
                         }else{
                         commento+=split[i];
                         }

@@ -42,10 +42,9 @@ import org.apache.commons.fileupload.servlet.ServletFileUpload;
  * @author HaoIlMito
  */
 public class Forum extends HttpServlet {
-    
-     Database dbmanager = new Database();  
-    
-    
+
+    Database dbmanager = new Database();
+
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -59,147 +58,143 @@ public class Forum extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
-            
+
             HttpSession session = request.getSession(true);//creo la sessione   //mettere le prossime 5 righe al filtro
             String username = (String) session.getAttribute("username");        //nel doFilter
             if (username == null) {
                 response.sendRedirect("index.html");
             }
-            
-            String action=null;
-            String messaggio=null;
-            String utente=null;
-            String titolo_gruppo=null;
-            String namepi=null;
-            String filename=null;
-            String originalFilename=null;
-            
-            if(!ServletFileUpload.isMultipartContent(request)){
-            action=request.getParameter("action");
-            utente=request.getParameter("utente");
-            titolo_gruppo =request.getParameter("Accedi");
-            }else{
-                        
-            //---------------------Upload eventuale file
+
+            String action = null;
+            String messaggio = null;
+            String utente = null;
+            String titolo_gruppo = null;
+            String namepi = null;
+            String filename = null;
+            String originalFilename = null;
             String realPath = getServletContext().getRealPath("/");
-            String dirName= realPath+"tmp";
-          
             
-           MultipartRequest multi = new MultipartRequest(request, dirName, 10*1024*1024, "ISO-8859-1", new DefaultFileRenamePolicy());
-        
-            action = multi.getParameter("action");
-            messaggio = multi.getParameter("messaggio");
-            utente = multi.getParameter("utente");
-            titolo_gruppo = multi.getParameter("Accedi");
-            
-          
+            if (!ServletFileUpload.isMultipartContent(request)) {
+                action = request.getParameter("action");
+                utente = request.getParameter("utente");
+                titolo_gruppo = request.getParameter("Accedi");
+            } else {
+
+                //---------------------Upload eventuale file
+                
+                String dirName = realPath + "tmp";
+
+                MultipartRequest multi = new MultipartRequest(request, dirName, 10 * 1024 * 1024, "ISO-8859-1", new DefaultFileRenamePolicy());
+
+                action = multi.getParameter("action");
+                messaggio = multi.getParameter("messaggio");
+                utente = multi.getParameter("utente");
+                titolo_gruppo = multi.getParameter("Accedi");
+                if (messaggio.equals("")) {
+                        out.println(Stampa.alert("danger", "E' obbligatorio inserire un commento!"));
+                }else{
 //             System.out.println("FILES:");
-             Enumeration files = multi.getFileNames();
+                Enumeration files = multi.getFileNames();
                 while (files.hasMoreElements()) {
-                namepi = (String)files.nextElement();
-                filename = multi.getFilesystemName(namepi);
-                originalFilename = multi.getOriginalFileName(namepi);
-                String type = multi.getContentType(namepi);  
-                File f = multi.getFile(namepi);
+                    namepi = (String) files.nextElement();
+                    filename = multi.getFilesystemName(namepi);
+                    originalFilename = multi.getOriginalFileName(namepi);
+                    String type = multi.getContentType(namepi);
+                    File f = multi.getFile(namepi);
 //                System.out.println("name: " + namepi);
 //                System.out.println("filename: " + filename);
 //                System.out.println("originalFilename: " + originalFilename);
 //                System.out.println("type: " + type);
-                if (f != null) {
+                    if (f != null) {
 //                System.out.println("f.toString(): " + f.toString());
 //                System.out.println("f.getName(): " + f.getName());
 //                System.out.println("f.exists(): " + f.exists());
 //                System.out.println("f.length(): " + f.length());
+                    }
+
                 }
-                
-                }
-                String source= realPath+"tmp/" + originalFilename;
+                String source = realPath + "tmp/" + originalFilename;
 //                System.out.println("sourEEEEEEEEEEEEEEEEEE:"+ source);
-                String destination= realPath+"groupsfolder/" + titolo_gruppo + "/" + originalFilename;                   
+                String destination = realPath + "groupsfolder/" + titolo_gruppo + "/" + originalFilename;
 //                System.out.println("destinationNNNNNNNNNNNNNNNNNNN:"+ destination);
-                 File afile =new File(source);
-                File bfile =new File(destination);
+                File afile = new File(source);
+                File bfile = new File(destination);
                 if (!(bfile.exists())) {
-                InputStream inStream = null;
-                        OutputStream outStream = null;
- 
-    	try{
- 
-            
-    	    
-    	    inStream = new FileInputStream(afile);
-    	    outStream = new FileOutputStream(bfile);
- 
-    	    byte[] buffer = new byte[1024];
-    	    int length;
-    	    //copy the file content in bytes 
-    	    while ((length = inStream.read(buffer)) > 0){
-    	    	outStream.write(buffer, 0, length);
-    	    }
-    	    inStream.close();
-    	    outStream.close();
- 
-    	    //delete the original file
-    	    afile.delete();
-            }catch(IOException e){
-    	    e.printStackTrace();
-    	}
-                }else{
-                     out.println(Stampa.alert("danger", "Il file che hai caricato è già presente"));
+                    InputStream inStream = null;
+                    OutputStream outStream = null;
+
+                    try {
+
+                        inStream = new FileInputStream(afile);
+                        outStream = new FileOutputStream(bfile);
+
+                        byte[] buffer = new byte[1024];
+                        int length;
+                        //copy the file content in bytes 
+                        while ((length = inStream.read(buffer)) > 0) {
+                            outStream.write(buffer, 0, length);
+                        }
+                        inStream.close();
+                        outStream.close();
+
+                        //delete the original file
+                        afile.delete();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    out.println(Stampa.alert("danger", "Il file che hai caricato è già presente"));
                 }
-            //----------FINE UPLOAD-----
+                }
+                //----------FINE UPLOAD-----
             }
-            
-            if(action!=null){
-            if(action.equals("1")){
-                if((titolo_gruppo!=null)&&(messaggio!=null)&&(!messaggio.equals(""))&&(dbmanager.checkusertogroup(username,titolo_gruppo))&&(username.equals(utente))){
-                    String cod_gruppo= dbmanager.take_cod_gruppo(titolo_gruppo);
-                    String cod_utente= dbmanager.take_cod_utente(username);
-                    dbmanager.addcomment(messaggio,cod_gruppo,cod_utente);
-                }else if(messaggio.equals("")){
-                    out.println(Stampa.alert("info", "Per favore inserisci un commento!"));
-                }else{
-                out.println(Stampa.header("OPSS!!!"));
-                out.println(Stampa.alert("danger", "Non fare il furbo"));
-                out.println(Stampa.footer());
+
+            if (action != null) {
+                if (action.equals("1")) {
+                    if ((titolo_gruppo != null) && (messaggio != null) && (!messaggio.equals("")) && (dbmanager.checkusertogroup(username, titolo_gruppo)) && (username.equals(utente))) {
+                        String cod_gruppo = dbmanager.take_cod_gruppo(titolo_gruppo);
+                        String cod_utente = dbmanager.take_cod_utente(username);
+                        dbmanager.addcomment(messaggio, cod_gruppo, cod_utente);
+                    } else if (messaggio.equals("")) {} else {
+                        out.println(Stampa.header("OPSS!!!"));
+                        out.println(Stampa.alert("danger", "Non fare il furbo"));
+                        out.println(Stampa.footer());
+                    }
                 }
             }
-            }
-            
-            out.println(Stampa.header("Forum del gruppo: "+titolo_gruppo));
+
+            out.println(Stampa.header("Forum del gruppo: " + titolo_gruppo));
             out.println("<div class=\"jumbotron well span6 offset2\">");
-            
+
             out.println("<div class=\"comments\">");
-            String cod_gruppo= dbmanager.take_cod_gruppo(titolo_gruppo);
+            String cod_gruppo = dbmanager.take_cod_gruppo(titolo_gruppo);
             //stampo tutti i commenti nella pagina
-            ArrayList<Comment> listaCommenti=dbmanager.listaCommenti(cod_gruppo);
-           Iterator it= listaCommenti.iterator();
-           while(it.hasNext()){
-            out.println(Stampa.stampacommento((Comment) it.next())); 
-           }
+            ArrayList<Comment> listaCommenti = dbmanager.listaCommenti(cod_gruppo);
+            Iterator it = listaCommenti.iterator();
+            while (it.hasNext()) {
+                String dirpath= realPath+"groupsfolder/" + titolo_gruppo;
+                String relativName= "groupsfolder/" + titolo_gruppo;
+                out.println(Stampa.stampacommento((Comment) it.next(),dirpath,relativName));
+            }
             out.println(Stampa.div(1));
             //stampo il form per inserire i commenti
             out.println("<form class=\"form-horizontal well span6 offset2\" name=\"input\" action=\"Forum\" ENCTYPE=\"multipart/form-data\" method=\"post\">");
             out.println("<div class=\"insert_comment\">");
-            out.println(Stampa.label("Messaggio","messaggio"));
+            out.println(Stampa.label("Messaggio", "messaggio"));
             out.println("<textarea name=\"messaggio\" id=\"messaggio\" cols=\"50\" rows=\"5\"></textarea>");
             out.println("<input type=\"file\" name=file>");
-            out.println("<input id=\"Accedi\" type=\"hidden\" name=\"Accedi\" value=\""+titolo_gruppo+"\">");
-            out.println("<input id=\"utente\" type=\"hidden\" name=\"utente\" value=\""+username+"\">");
+            out.println("<input id=\"Accedi\" type=\"hidden\" name=\"Accedi\" value=\"" + titolo_gruppo + "\">");
+            out.println("<input id=\"utente\" type=\"hidden\" name=\"utente\" value=\"" + username + "\">");
             out.println("<input id=\"action\" type=\"hidden\" name=\"action\" value=\"1\">");
             out.println("</br>");
-            out.println(Stampa.button("","Commenta!"));
+            out.println(Stampa.button("", "Commenta!"));
             out.println("</form>");
-            
-            
-  
-    
-            
+
             out.println(Stampa.div(2));
             out.println(Stampa.footer());
         } catch (SQLException ex) {
-             Logger.getLogger(Forum.class.getName()).log(Level.SEVERE, null, ex);
-         }
+            Logger.getLogger(Forum.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
@@ -228,9 +223,8 @@ public class Forum extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-         processRequest(request, response);
-        
-        
+        processRequest(request, response);
+
     }
 
     /**
