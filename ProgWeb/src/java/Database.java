@@ -49,10 +49,10 @@ public class Database implements Serializable {
     public Database() {
         try {
             Class.forName("com.mysql.jdbc.Driver").newInstance(); //carica i driver per connettersi al database
-            Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/test", "root", "1punto"); //creo connessione al database   
+            Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3036/test", "root", "root"); //creo connessione al database   
             this.con = con;
         } catch (Exception e) {
-            System.out.println("odjfoaijdofsai");
+            System.out.println("Errore nella connessione al server");
         }
 
     }
@@ -439,7 +439,7 @@ public class Database implements Serializable {
         return commento;
     }
 
-    public boolean creaGruppo(String titolo_gruppo, String amministratore,String realPath) throws SQLException {
+    public boolean creaGruppo(String titolo_gruppo, String amministratore, String realPath) throws SQLException {
 
         boolean val = false;
 
@@ -454,14 +454,14 @@ public class Database implements Serializable {
                     //quindi il gruppo esiste già e non bisogna crearlo!
                     val = true;
                 } else {
-                    String dirName= realPath+"groupsfolder/" + titolo_gruppo;
+                    String dirName = realPath + "groupsfolder/" + titolo_gruppo;
                     File theDir = new File(dirName);
                     if (!theDir.exists()) {
-                    System.out.println("creating directory: " + dirName);
-                    boolean result = theDir.mkdirs();  
-                    if(result) {    
-                    System.out.println("DIR created");  
-                    }
+                        System.out.println("creating directory: " + dirName);
+                        boolean result = theDir.mkdirs();
+                        if (result) {
+                            System.out.println("DIR created");
+                        }
                     }
                     Date data_creazione = Calendar.getInstance().getTime();
                     SimpleDateFormat ft = new SimpleDateFormat("yyyy/MM/dd");
@@ -510,8 +510,7 @@ public class Database implements Serializable {
         }
 
     }
-    
-    
+
     String take_cod_utente(String username) throws SQLException {
         PreparedStatement stm = con.prepareStatement("select id_utenti from utenti where username=?");
         stm.setString(1, username);
@@ -532,7 +531,7 @@ public class Database implements Serializable {
     }
 
     String take_name_utente(String id_utente) throws SQLException {
-    PreparedStatement stm = con.prepareStatement("select username from utenti where id_utenti=?");
+        PreparedStatement stm = con.prepareStatement("select username from utenti where id_utenti=?");
         stm.setString(1, id_utente);
         ResultSet rs = stm.executeQuery();
         try {
@@ -549,8 +548,9 @@ public class Database implements Serializable {
         }
     }
 //Controlla che l'utente appartenga per davvero a quel gruppo
+
     boolean checkusertogroup(String username, String titolo_gruppo) throws SQLException {
-           
+
         PreparedStatement stm = con.prepareStatement("select * from gruppi_utenti where gruppo=? and utente=? and stato=2");
         try {
             stm.setString(1, titolo_gruppo);
@@ -558,9 +558,9 @@ public class Database implements Serializable {
             ResultSet rs = stm.executeQuery();
             try {
                 if (rs.next()) {
-                   return true;
+                    return true;
                 } else {
-                   return false;
+                    return false;
                 }
             } finally {
                 rs.close();
@@ -569,10 +569,9 @@ public class Database implements Serializable {
             stm.close();
         }
 
-     
-   }
+    }
 
-    void addcomment(String messaggio, String cod_gruppo, String cod_utente,String originalFilename) throws SQLException {
+    void addcomment(String messaggio, String cod_gruppo, String cod_utente, String originalFilename) throws SQLException {
         Date data_creazione = Calendar.getInstance().getTime();
         SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String creationDate = ft.format(data_creazione);
@@ -587,7 +586,30 @@ public class Database implements Serializable {
         } finally {
             stm.close();
         }
- }
+    }
 
-   
+    public ArrayList<String> listaUtentiGruppo(String titolo_gruppo) throws SQLException {
+        String tmp;
+        ArrayList<String> listautenti = new ArrayList<String>();
+        PreparedStatement stm = con.prepareStatement("select gruppi_utenti.utente FROM gruppi_utenti WHERE gruppo=? && stato = ?");
+        stm.setString(1, titolo_gruppo);
+        stm.setString(2, "2");
+
+        try {
+            ResultSet rs = stm.executeQuery();
+            try {
+                while (rs.next()) {
+                    listautenti.add(rs.getString("utente"));
+                }
+            } finally {
+                rs.close();
+            }
+        } finally {
+            stm.close();
+        }
+
+        return listautenti;
+
+    }
+
 }

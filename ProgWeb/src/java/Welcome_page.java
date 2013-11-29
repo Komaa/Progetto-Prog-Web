@@ -55,10 +55,13 @@ public class Welcome_page extends HttpServlet {
                 response.sendRedirect("index.html");
             }                                                                   //fino a qui
 
-            out.println(Stampa.header("Welcome page!"));
-            out.println("<div class=\"jumbotron well span6 offset2\"><h3>" + session.getAttribute("cookie") + "</h3><hr>");
-            out.println(Stampa.aref("", "Inviti"));
-            out.println("</br>");
+            out.println(Stampa.header("<h1>" + session.getAttribute("cookie") + "</h1>"));
+            out.println(Stampa.section_content("Qui puoi trovare informazioni sui gruppi che ti hanno invitato!"));
+            out.println(Stampa.section_content("Clicca su Creazione gruppo o gruppi per utilizzare le altre funzioni del sito!"));
+            //questi div servono per chiudere l'header;
+            out.println(Stampa.div(2));
+            out.println("<div class=\"container span4 offset4\">");
+            out.println("<h1>Inviti ai gruppi</h1><hr>");
 
             inviti.clear();
             stamptable.clear();
@@ -73,9 +76,11 @@ public class Welcome_page extends HttpServlet {
             if (stamptable.size() > 0) {
                 out.println(Stampa.table_inviti(username, colums, stamptable));
             } else {
-                out.println(Stampa.alert("warning", "Non ci sono inviti"));
+                out.println("<div class=\"row\">");
+                out.println("<div class=\"col-md-4\">");
+                out.println(Stampa.alert("info", "Non ci sono inviti al momento"));
+                out.println(Stampa.div(2));
             }
-            out.println(Stampa.sezione());
             out.println(Stampa.div(2));
             out.println(Stampa.footer());
         }

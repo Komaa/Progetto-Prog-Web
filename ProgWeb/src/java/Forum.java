@@ -62,7 +62,7 @@ public class Forum extends HttpServlet {
             HttpSession session = request.getSession(true);//creo la sessione   //mettere le prossime 5 righe al filtro
             String username = (String) session.getAttribute("username");        //nel doFilter
             if (username == null) {
-                response.sendRedirect("index.html");
+                response.sendRedirect("index");
             }
 
             String action = null;
@@ -78,6 +78,9 @@ public class Forum extends HttpServlet {
                 action = request.getParameter("action");
                 utente = request.getParameter("utente");
                 titolo_gruppo = request.getParameter("Accedi");
+                out.println(Stampa.header("Forum del gruppo: " + titolo_gruppo));
+                out.println(Stampa.section_content("Questo è il forum del vostro gruppo, condividete!"));
+                out.println(Stampa.div(2));
             } else {
 
                 //---------------------Upload eventuale file
@@ -90,8 +93,11 @@ public class Forum extends HttpServlet {
                 utente = multi.getParameter("utente");
                 titolo_gruppo = multi.getParameter("Accedi");
                 if (messaggio.equals("")) {
+                    out.println(Stampa.header("Forum del gruppo: " + titolo_gruppo));
+                    out.println(Stampa.section_content("Questo è il forum del vostro gruppo, condividete!"));
+                    out.println(Stampa.div(2));
                     out.println(Stampa.alert("danger", "E' obbligatorio inserire un commento!"));
-    
+
                 } else {
 //             System.out.println("FILES:");
                     Enumeration files = multi.getFileNames();
@@ -112,7 +118,7 @@ public class Forum extends HttpServlet {
 //                System.out.println("f.length(): " + f.length());
                         }
                     }
-                    if(originalFilename!=null){
+                    if (originalFilename != null) {
                         String source = realPath + "tmp/" + originalFilename;
 //                System.out.println("sourEEEEEEEEEEEEEEEEEE:"+ source);
                         String destination = realPath + "groupsfolder/" + titolo_gruppo + "/" + originalFilename;
@@ -147,7 +153,7 @@ public class Forum extends HttpServlet {
                             out.println(Stampa.alert("danger", "Il file che hai caricato è già presente"));
                             afile.delete();
                         }
-                    }else{
+                    } else {
                         originalFilename = "noallegato";
                     }
                 }
@@ -168,35 +174,48 @@ public class Forum extends HttpServlet {
                     }
                 }
             }
-
-            out.println(Stampa.header("Forum del gruppo: " + titolo_gruppo));
-            out.println("<div class=\"jumbotron well span6 offset2\">");
-
-            out.println("<div class=\"comments\">");
-            String cod_gruppo = dbmanager.take_cod_gruppo(titolo_gruppo);
-            //stampo tutti i commenti nella pagina
-            ArrayList<Comment> listaCommenti = dbmanager.listaCommenti(cod_gruppo);
-            Iterator it = listaCommenti.iterator();
-            while (it.hasNext()) {
-                String dirpath = realPath + "groupsfolder/" + titolo_gruppo;
-                String relativName = "groupsfolder/" + titolo_gruppo;
-                out.println(Stampa.stampacommento((Comment) it.next(), dirpath, relativName));
-            }
-            out.println(Stampa.div(1));
+            
+//            out.println("<div class=\"jumbotron well span6 offset2\">");
+//
+//            out.println("<div class=\"comments\">");
+//            String cod_gruppo = dbmanager.take_cod_gruppo(titolo_gruppo);
+//            //stampo tutti i commenti nella pagina
+//            ArrayList<Comment> listaCommenti = dbmanager.listaCommenti(cod_gruppo);
+//            Iterator it = listaCommenti.iterator();
+//            while (it.hasNext()) {
+//                String dirpath = realPath + "groupsfolder/" + titolo_gruppo;
+//                String relativName = "groupsfolder/" + titolo_gruppo;
+//                out.println(Stampa.stampacommento((Comment) it.next(), dirpath, relativName));
+//            }
+//            out.println(Stampa.div(2));
+            
             //stampo il form per inserire i commenti
-            out.println("<form class=\"form-horizontal well span6 offset2\" name=\"input\" action=\"Forum\" ENCTYPE=\"multipart/form-data\" method=\"post\">");
+            out.println("<div class=\"row\" style=\"padding-top: 50px\">");
+            out.println("<div class=\"container .col-md-6 .col-md-offset-3\">");
+            out.println("<div class=\"panel panel-primary\">");
+            out.println("<div class=\"panel-heading\">");
+            out.println("<h3 class=\"panel-title\">"+username+" scrivi un post!</h3></div>");
+            out.println("<div class=\"panel-body\">");
+            out.println("<form class=\"form-horizontal\" name=\"input\" action=\"Forum\" ENCTYPE=\"multipart/form-data\" method=\"post\">");
+            out.println("<div class=\"control-group\"");
             out.println("<div class=\"insert_comment\">");
-            out.println(Stampa.label("Messaggio", "messaggio"));
-            out.println("<textarea name=\"messaggio\" id=\"messaggio\" cols=\"50\" rows=\"5\"></textarea>");
-            out.println("<input type=\"file\" name=file>");
+            out.println("<h4>Messaggio</h4><br>");
+            out.println("<textarea name=\"messaggio\" id=\"messaggio\" cols=\"100\" rows=\"5\"></textarea>");
+            out.println(Stampa.div(1));
+            out.println("<div class=\"control-group\">");
+            out.println("<br><button class=\"btn btn-warning\" type=\"file\" name=file>Upload file</button><h4>Carica un file per gli altri utenti!</h4><hr>");
             out.println("<input id=\"Accedi\" type=\"hidden\" name=\"Accedi\" value=\"" + titolo_gruppo + "\">");
             out.println("<input id=\"utente\" type=\"hidden\" name=\"utente\" value=\"" + username + "\">");
             out.println("<input id=\"action\" type=\"hidden\" name=\"action\" value=\"1\">");
+            out.println(Stampa.div(1));
             out.println("</br>");
+            out.println("<div class=\"control-group\">");
             out.println(Stampa.button("", "Commenta!"));
+            out.println("<button type=\"reset\" class=\"btn btn-danger btn-sm\">Cancella!</button>");
+            out.println(Stampa.div(1));
             out.println("</form>");
 
-            out.println(Stampa.div(2));
+            out.println(Stampa.div(4));
             out.println(Stampa.footer());
         } catch (SQLException ex) {
             Logger.getLogger(Forum.class.getName()).log(Level.SEVERE, null, ex);

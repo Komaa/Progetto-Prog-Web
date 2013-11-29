@@ -71,13 +71,12 @@ public class GeneraPdf extends HttpServlet {
         String cod_utente = dbmanager.take_cod_utente(username);
 
         System.out.println(titolo_gruppo);
-        ArrayList<String> utenti = dbmanager.listaUtenti(username, titolo_gruppo);
-        utenti.add(username);
-        System.out.println("Utenti: " + utenti.size());
+        ArrayList<String> utenti = dbmanager.listaUtentiGruppo(titolo_gruppo);
+
 
         //creo la lista dei post fatti
         int commenti = dbmanager.contaCommenti(cod_gruppo);
-        System.out.println("commenti: " + commenti);
+
         //creo la data dell'ultimo post
 
         Date ultimo_post = dbmanager.ultimoPost(cod_gruppo);
@@ -87,7 +86,7 @@ public class GeneraPdf extends HttpServlet {
         if (ultimo_post != null) {
             ultimo_post_string = ft.format(ultimo_post);
         } else {
-            ultimo_post_string = Stampa.alert("info", "non ci sono post nel gruppo!");
+            ultimo_post_string = "non ci sono post nel gruppo!";
         }
 
         String nome_pdf = titolo_gruppo + ".pdf";

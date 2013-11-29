@@ -46,10 +46,12 @@ public class Gruppi extends HttpServlet {
             HttpSession session = request.getSession(true);//creo la sessione   //mettere le prossime 5 righe al filtro
             String username = (String) session.getAttribute("username");        //nel doFilter
             if (username == null) {
-                response.sendRedirect("index.html");
+                response.sendRedirect("index");
             }      
             
             out.println(Stampa.header("Lista dei gruppi"));
+            out.println(Stampa.section_content("Qui puoi vedere la lista dei gruppi a cui sei iscritto o sei l'amministratore"));
+            out.println(Stampa.div(2));
             
             gruppi.clear();
             stamptable.clear();
@@ -62,10 +64,15 @@ public class Gruppi extends HttpServlet {
                 ArrayList<String> app = new ArrayList<String>(Arrays.asList(new String[]{nome, "&entra", "Forum", "%titolo_gruppo", "Invita"}));
                 stamptable.add(app);
             }
-            System.out.println(stamptable.size());
-            out.println(Stampa.table_gruppi(username, colums, stamptable));
             
-            out.println(Stampa.div(2));
+            out.println("<div class=\"container span4 offset4\"><br>");
+            
+            if (stamptable.size()== 0) {
+                out.println(Stampa.alert("info","Non sei iscritto a nessun gruppo"));
+            } else {
+                out.println(Stampa.table_gruppi(username, colums, stamptable));
+            }
+            out.println(Stampa.div(3));
             out.println(Stampa.footer());
             
 

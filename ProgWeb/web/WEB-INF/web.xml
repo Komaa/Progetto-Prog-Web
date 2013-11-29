@@ -27,7 +27,6 @@
     <servlet>
         <servlet-name>Forum</servlet-name>
         <servlet-class>Forum</servlet-class>
-        
     </servlet>
     <servlet>
         <servlet-name>Genera_pdf</servlet-name>
@@ -37,13 +36,13 @@
         <servlet-name>GeneraPdf</servlet-name>
         <servlet-class>GeneraPdf</servlet-class>
     </servlet>
-    <servlet-mapping>
-        <servlet-name>NewServlet1</servlet-name>
-        <url-pattern>/NewServlet1</url-pattern>
-    </servlet-mapping>
     <servlet>
         <servlet-name>Login</servlet-name>
         <servlet-class>Login</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>Index</servlet-name>
+        <servlet-class>Index</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>Login</servlet-name>
@@ -96,6 +95,13 @@
     <servlet-mapping>
         <servlet-name>GeneraPdf</servlet-name>
         <url-pattern>/GeneraPdf</url-pattern>
+    </servlet-mapping>
+    <welcome-file-list>
+        <welcome-file>Index</welcome-file>
+    </welcome-file-list>
+    <servlet-mapping>
+        <servlet-name>Index</servlet-name>
+        <url-pattern>/Index</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>

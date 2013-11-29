@@ -3,7 +3,6 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package Models;
 
 import java.util.ArrayList;
@@ -14,22 +13,23 @@ import java.util.Date;
  * @author pietro
  */
 public class Comment {
-     private String text, id_utente, id_gruppo, data, allegato;
+
+    private String text, id_utente, id_gruppo, data, allegato;
 
     public Comment() {
     }
-    
-    public Comment(String text, String id_utente, String id_gruppo, String data, String allegato){
-        this.text=text;
-        this.id_utente=id_utente;
-        this.id_gruppo=id_gruppo;
-        this.data=data;
-        this.allegato=allegato;
+
+    public Comment(String text, String id_utente, String id_gruppo, String data, String allegato) {
+        this.text = text;
+        this.id_utente = id_utente;
+        this.id_gruppo = id_gruppo;
+        this.data = data;
+        this.allegato = allegato;
     }
-    
-    public static ArrayList<Comment> commento(String text, String id_utente, String id_gruppo, String data){
+
+    public static ArrayList<Comment> commento(String text, String id_utente, String id_gruppo, String data) {
         ArrayList<Comment> commento = null;
-        
+
         return commento;
     }
 
@@ -48,12 +48,11 @@ public class Comment {
     public void setData(String data) {
         this.data = data;
     }
-    
-    public void setAlegato(String allegato) {
+
+    public void setAllegato(String allegato) {
         this.allegato = allegato;
     }
 
-    
     public String getText() {
         return text;
     }
@@ -69,11 +68,9 @@ public class Comment {
     public String getData() {
         return data;
     }
-    
+
     public String getAllegato() {
         return allegato;
     }
-    
-    
-    
+
 }

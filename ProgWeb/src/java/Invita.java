@@ -62,8 +62,12 @@ public class Invita extends HttpServlet {
             String action = request.getParameter("action");
             String invito = (String) request.getParameter("invito");
             String realPath = getServletContext().getRealPath("/");
+            
             out.println(Stampa.header("Invita utenti nel gruppo!"));
-            out.println("<div class=\"container\">");
+            out.println(Stampa.section_content("qui puoi cambiare il titolo del gruppo, oppure invitare altri utenti nel gruppo"));
+            out.println(Stampa.div(2));
+            out.println("<br><div class=\"container\">");
+            
             //(titolo_gruppo != null) && (amministratore != null) && !dbmanager.check_group(titolo_gruppo, amministratore)
             if ((titolo_gruppo != null) && (amministratore != null)) {
                 //se è già creato non bisogna entrarci di nuovo! (sennò duplica tutti gli utenti con le stampe quando refresha la pagina)
@@ -96,9 +100,9 @@ public class Invita extends HttpServlet {
 
             //SE sono l'amministratore del gruppo, posso modificargli il nome e generare il pdf 
             if (username.equals(amministratore)) {
-                out.println("<form action=\"cambia_titolo\">Nome gruppo: <input id=\"titolo_gruppo\" type=\"text\" name=\"titolo_gruppo_nuovo\" value=\"" + titolo_gruppo + "\">"
+                out.println("<form action=\"cambia_titolo\" method=\"post\">Nome gruppo: <input id=\"titolo_gruppo\" type=\"text\" name=\"titolo_gruppo_nuovo\" value=\"" + titolo_gruppo + "\">"
                         + "<input type=\"hidden\" name=\"titolo_gruppo_vecchio\" value=\"" + titolo_gruppo + "\"><input type=\"hidden\" name=\"action\" value=\"3\"><input type=\"hidden\" name=\"realPath\" value=\""+realPath +"\"><input type=\"hidden\" name=\"amministratore\" value=\"" + amministratore + "\"> " + Stampa.button("titolo", "Cambia Titolo") + "</form></br>");
-                out.println("<form action=\"GeneraPdf\">" + Stampa.button(titolo_gruppo, "Genera") + "</form>");
+                out.println("<form action=\"GeneraPdf\" method=\"post\">" + Stampa.button(titolo_gruppo, "Genera") + "</form>");
                 out.println("</br>");
                 out.println("Amministratore gruppo: " + amministratore + "</br></br>");
                 out.println("<div class=\"userlist\">");

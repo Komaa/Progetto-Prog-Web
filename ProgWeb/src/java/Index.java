@@ -16,7 +16,9 @@ import javax.servlet.http.HttpSession;
  *
  * @author HaoIlMito
  */
-public class Logout extends HttpServlet {
+public class Index extends HttpServlet {
+
+    Database dbmanager = new Database();
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -31,12 +33,14 @@ public class Logout extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
-            HttpSession session = request.getSession(true);
-            if (session != null) {
-                session.invalidate();
-                response.sendRedirect("Index");
-                return; // <--- Here.
-            }
+            /* TODO output your page here. You may use following sample code. */
+            HttpSession session = request.getSession(true);//creo la sessione   //mettere le prossime 5 righe al filtro
+            String username = (String) session.getAttribute("username");        //nel doFilter
+
+            //logga
+            out.println(Stampa.index());
+            out.println(Stampa.footer());
+
         }
     }
 

@@ -41,7 +41,7 @@ public class cambia_titolo extends HttpServlet {
             HttpSession session = request.getSession(true);//creo la sessione   //mettere le prossime 5 righe al filtro
             String username = (String) session.getAttribute("username");        //nel doFilter
             if (username == null) {
-                response.sendRedirect("index.html");
+                response.sendRedirect("index");
             }
 
             String titolo_gruppo_nuovo = request.getParameter("titolo_gruppo_nuovo");
@@ -69,7 +69,11 @@ public class cambia_titolo extends HttpServlet {
                 response.sendRedirect("Invita?titolo_gruppo="+titolo_gruppo_nuovo+"&amministratore="+amministratore+"&action=3");
             } else {
                 out.println(Stampa.header("OPSS!!!"));
+                out.println(Stampa.section_content("Ricorda che non puoi avere un nome di un gruppo uguale ad un altro!"));
+                out.println(Stampa.div(2));
+                out.println("<br><div class=\"container\">");
                 out.println(Stampa.alert("danger", "Nome del gruppo non valido oppure non sei autorizzato a cambiare il titolo!"));
+                out.println(Stampa.div(1));
                 out.println(Stampa.footer());
             }
         }
