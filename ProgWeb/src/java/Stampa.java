@@ -270,7 +270,15 @@ public class Stampa {
 
     static String stampacommento(Comment comment, String dirName, String relativName) throws SQLException {
         String name = dbmanager.take_name_utente(comment.getId_utente());
-        String commento = "Testo: ";
+        String commento = "";
+        
+        commento += "<div class=\"panel panel-info\">";
+        commento += "<div class=\"panel-heading\">";
+        commento += "<h3 class=\"panel-title\">Autore: " + name + " scritto in data: " + comment.getData() + "</div>";
+        commento += "<div class=\"panel-body\" style=\"min-height:100px\">";
+        
+        commento += "<h4>";
+        
         String relName = relativName;
         String[] split = comment.getText().split("\\$\\$");
 
@@ -291,7 +299,9 @@ public class Stampa {
                 commento += split[i];
             }
         }
-        commento += "<br>Autore: " + name + "<br>Data: " + comment.getData() + "<br>";
+        
+        commento += "</h4></div>";
+        commento += "<div class=\"panel-footer\">";
         String allegato = comment.getAllegato();
         if (!allegato.equals("noallegato")) {
             commento += "Allegato: ";
@@ -300,7 +310,7 @@ public class Stampa {
         } else {
             commento += "Allegato: Nessun allegato aggiunto<br><br>";
         }
-
+        commento += "</div></div>";
         return commento;
     }
 
