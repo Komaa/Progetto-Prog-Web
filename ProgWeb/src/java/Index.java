@@ -36,7 +36,9 @@ public class Index extends HttpServlet {
             /* TODO output your page here. You may use following sample code. */
             HttpSession session = request.getSession(true);//creo la sessione   //mettere le prossime 5 righe al filtro
             String username = (String) session.getAttribute("username");        //nel doFilter
-
+            if (username!=null){
+                response.sendRedirect("welcome_page");
+            }
             //logga
             out.println(Stampa.index());
             out.println(Stampa.footer());

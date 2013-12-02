@@ -54,10 +54,12 @@ public class Invita extends HttpServlet {
             HttpSession session = request.getSession(true);//creo la sessione   //mettere le prossime 5 righe al filtro
             String username = (String) session.getAttribute("username");        //nel doFilter
             if (username == null) {
-                response.sendRedirect("index.html");
+                response.sendRedirect("index");
             }
 
             String titolo_gruppo = (String) request.getParameter("titolo_gruppo");
+            titolo_gruppo = titolo_gruppo.replaceAll("<", "");
+            titolo_gruppo = titolo_gruppo.replaceAll(">", "");
             String amministratore = (String) request.getParameter("amministratore");
             String action = request.getParameter("action");
             String invito = (String) request.getParameter("invito");

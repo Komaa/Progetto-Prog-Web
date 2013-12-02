@@ -91,6 +91,8 @@ public class Forum extends HttpServlet {
 
                 action = multi.getParameter("action");
                 messaggio = multi.getParameter("messaggio");
+                messaggio = messaggio.replaceAll("<", "");
+                messaggio = messaggio.replaceAll(">", "");    
                 utente = multi.getParameter("utente");
                 titolo_gruppo = multi.getParameter("Accedi");
                 if (messaggio.equals("")) {

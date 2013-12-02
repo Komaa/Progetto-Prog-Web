@@ -104,7 +104,6 @@ public class Database implements Serializable {
         ArrayList<Comment> listaCommenti = new ArrayList<Comment>();
         PreparedStatement stm = con.prepareStatement("select * from comments where id_gruppo=? ORDER BY data DESC");
         stm.setString(1, id_gruppo);
-        System.out.println(stm);
         try {
             ResultSet rs = stm.executeQuery();
             try {
@@ -259,7 +258,7 @@ public class Database implements Serializable {
             stm.setString(2, titolo_gruppo);
             stm.setString(3, username);
             stm.setString(4, "1");
-            System.out.println(stm);
+
             //executeUpdate è per le query di inserimento!
             stm.executeUpdate();
         } finally {
