@@ -286,12 +286,12 @@ public class Stampa {
 
             if ((i % 2) == 1) {
 
-                dirName += "/" + split[i];
-                relativName += "/" + split[i];
+                String d=dirName + "/" + split[i];
+                String r=relativName + "/" + split[i];
 
-                File theDir = new File(dirName);
+                File theDir = new File(d);
                 if (theDir.exists()) {
-                    commento += Stampa.arefnew__page(relativName, split[i]);
+                    commento += Stampa.arefnew__page(r, split[i]);
                 } else {
                     commento += Stampa.arefnew_ex_page(split[i], split[i]);
                 }

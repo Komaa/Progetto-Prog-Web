@@ -80,9 +80,6 @@ public class Invita extends HttpServlet {
                 }
                 if (action.equals("1")) {
                     //Creo il database con i dati
-                    
-                    dbmanager.creaGruppo(titolo_gruppo, amministratore,realPath);
-                    dbmanager.inserisci_amministratore(username, titolo_gruppo);
                     out.println(Stampa.alert("success", "Il gruppo è stato creato!"));
                 }
                 if (action.equals("3")) {

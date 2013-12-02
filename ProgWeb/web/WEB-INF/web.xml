@@ -44,6 +44,10 @@
         <servlet-name>Index</servlet-name>
         <servlet-class>Index</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>crea_gruppo</servlet-name>
+        <servlet-class>crea_gruppo</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>Login</servlet-name>
         <url-pattern>/login</url-pattern>
@@ -102,6 +106,10 @@
     <servlet-mapping>
         <servlet-name>Index</servlet-name>
         <url-pattern>/Index</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>crea_gruppo</servlet-name>
+        <url-pattern>/crea_gruppo</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>
